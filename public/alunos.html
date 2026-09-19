@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Alunos | Controle Escolar</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f5f8ff;
+            color: #17213a;
+        }
+
+        .topbar {
+            height: 75px;
+            background: #fff;
+            border-bottom: 1px solid #e4e9f3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+        }
+
+        .title h1 {
+            font-size: 22px;
+        }
+
+        .title p {
+            color: #7c88a0;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .back {
+            text-decoration: none;
+            background: #2864e8;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 9px;
+            font-size: 13px;
+        }
+
+        .content {
+            padding: 30px 35px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            gap: 15px;
+        }
+
+        .search {
+            width: 320px;
+            padding: 12px 15px;
+            border: 1px solid #dce3ef;
+            border-radius: 9px;
+            outline: none;
+            background: white;
+        }
+
+        .search:focus {
+            border-color: #2864e8;
+        }
+
+        .new-button {
+            border: none;
+            background: #2864e8;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e4e9f3;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            background: #fafbfe;
+            color: #7f8ba3;
+            font-size: 11px;
+            font-weight: normal;
+            padding: 15px 18px;
+        }
+
+        td {
+            padding: 15px 18px;
+            border-top: 1px solid #edf0f5;
+            font-size: 12px;
+        }
+
+        .student {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #edf3ff;
+            color: #2864e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .status {
+            background: #eafaf1;
+            color: #168445;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #8994a9;
+        }
+
+
+        .selection-tools {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 13px;
+            background: #fff5f5;
+            border: 1px solid #f3d0d0;
+            border-radius: 10px;
+            color: #7d2424;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .selection-tools.show {
+            display: flex;
+        }
+
+        .selection-tools .selected-count {
+            margin-right: auto;
+        }
+
+        .delete-button,
+        .delete-selected {
+            border: 1px solid #efcaca;
+            background: #fff;
+            color: #c62828;
+            padding: 8px 11px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .delete-button:hover,
+        .delete-selected:hover {
+            background: #fff0f0;
+        }
+
+        .delete-button:disabled,
+        .delete-selected:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .check-cell {
+            width: 42px;
+            text-align: center;
+        }
+
+        .check-cell input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #2864e8;
+        }
+
+        .actions-left,
+        .actions-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .actions-left {
+            flex: 1;
+        }
+
+        .actions-right {
+            justify-content: flex-end;
+        }
+
+        .action-cell {
+            white-space: nowrap;
+        }
+
+        /* MODAL */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 30, 50, 0.45);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 520px;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .modal-header h2 {
+            font-size: 19px;
+        }
+
+        .close {
+            border: none;
+            background: transparent;
+            font-size: 25px;
+            color: #8994a9;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #dce3ef;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #2864e8;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .submit {
+            width: 100%;
+            border: none;
+            background: #2864e8;
+            color: white;
+            padding: 13px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* AVISO */
+
+        .alert {
+            display: none;
+            padding: 14px 17px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #eafaf1;
+            color: #168445;
+            border: 1px solid #ccebd9;
+        }
+
+        .alert.error {
+            background: #fff0f0;
+            color: #c62828;
+            border: 1px solid #f2cccc;
+        }
+
+        @media (max-width: 700px) {
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="title">
+        <h1>👨‍🎓 Alunos</h1>
+        <p>Gerenciamento dos alunos cadastrados</p>
+    </div>
+
+    <a href="dashboard.html" class="back">
+        ← Dashboard
+    </a>
+
+</header>
+
+
+<main class="content">
+
+    <div id="alert" class="alert"></div>
+
+    <div class="actions">
+
+        <div class="actions-left">
+            <input
+                type="text"
+                id="search"
+                class="search"
+                placeholder="🔎 Buscar aluno..."
+            >
+
+            <div id="selectionTools" class="selection-tools">
+                <span id="selectedCount" class="selected-count">0 selecionados</span>
+                <button type="button" class="delete-selected" id="deleteSelectedButton" onclick="excluirSelecionados()">
+                    🗑️ Excluir selecionados
+                </button>
+            </div>
+        </div>
+
+        <div class="actions-right">
+            <button
+                class="new-button"
+                onclick="abrirModal()"
+            >
+                + Novo aluno
+            </button>
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th class="check-cell">
+                        <input type="checkbox" id="selecionarTodos" title="Selecionar todos" onchange="alternarTodos(this.checked)">
+                    </th>
+                    <th>Aluno</th>
+                    <th>Matrícula</th>
+                    <th>Turma</th>
+                    <th>E-mail</th>
+                    <th>QR Code</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaAlunos">
+
+                <tr>
+                    <td colspan="8" class="empty">
+                        Carregando alunos...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<!-- MODAL CADASTRO -->
+
+<div id="modal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>👨‍🎓 Cadastrar aluno</h2>
+
+            <button
+                class="close"
+                onclick="fecharModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="formAluno">
+
+            <div class="form-group">
+
+                <label>Nome completo *</label>
+
+                <input
+                    type="text"
+                    id="nome"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>Matrícula *</label>
+
+                    <input
+                        type="text"
+                        id="matricula"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Turma *</label>
+
+                    <select id="turma_id" required>
+                        <option value="">Carregando turmas...</option>
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>E-mail</label>
+
+                <input
+                    type="email"
+                    id="email"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>WhatsApp</label>
+
+                <input
+                    type="text"
+                    id="whatsapp"
+                    placeholder="(00) 00000-0000"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit"
+            >
+                Cadastrar aluno
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="js/auth.js"></script>
+<script>
+
+let alunos = [];
+let alunosSelecionados = new Set();
+
+function escaparHtml(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, (caractere) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    }[caractere]));
+}
+
+
+
+async function baixarQrCode(id, nome) {
+    try {
+        const resposta = await fetch(`/api/alunos/${id}/qrcode`, {
+            headers: cabecalhosAutenticados()
+        });
+        if (!resposta.ok) {
+            const dados = await resposta.json().catch(() => ({}));
+            throw new Error(dados.erro || 'Não foi possível baixar o QR Code.');
+        }
+        const blob = await resposta.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `qrcode_${String(nome || 'aluno').replace(/[^a-z0-9]/gi, '_')}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (erro) {
+        mostrarAlerta('error', '❌ ' + erro.message);
+    }
+}
+
+/* =========================================
+   BUSCAR ALUNOS
+========================================= */
+
+async function carregarTurmas() {
+    const resposta = await fetch('/api/turmas', { headers: cabecalhosAutenticados() });
+    const dados = await resposta.json();
+    if (!resposta.ok) throw new Error(dados.erro || 'Não foi possível carregar as turmas.');
+
+    const select = document.getElementById('turma_id');
+    const ativas = dados.filter(t => Number(t.ativo) === 1);
+    select.innerHTML = '<option value="">Selecione uma turma</option>' +
+        ativas.map(t => `<option value="${t.id}">${escaparHtml(t.nome)} — ${escaparHtml(t.ano)}</option>`).join('');
+}
+
+async function carregarAlunos() {
+
+    if (!(await exigirAutenticacao())) return;
+
+    try {
+
+        const resposta = await fetch('/api/alunos', { headers: cabecalhosAutenticados() });
+
+        if (!resposta.ok) {
+            throw new Error('Erro ao buscar alunos.');
+        }
+
+        alunos = await resposta.json();
+
+        mostrarAlunos(alunos);
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        document.getElementById('listaAlunos').innerHTML = `
+            <tr>
+                <td colspan="8" class="empty">
+                    ❌ Não foi possível carregar os alunos.
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   MOSTRAR ALUNOS
+========================================= */
+
+function mostrarAlunos(lista) {
+
+    const tabela = document.getElementById('listaAlunos');
+
+    if (lista.length === 0) {
+
+        tabela.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty">
+                    👨‍🎓 Nenhum aluno cadastrado.
+                </td>
+            </tr>
+        `;
+
+        atualizarSelecaoVisual();
+        return;
+    }
+
+
+    tabela.innerHTML = lista.map(aluno => {
+
+        const inicial =
+            aluno.nome
+                ? aluno.nome.charAt(0).toUpperCase()
+                : '?';
+
+        return `
+            <tr>
+
+                <td class="check-cell">
+                    <input
+                        type="checkbox"
+                        class="check-aluno"
+                        value="${aluno.id}"
+                        ${alunosSelecionados.has(Number(aluno.id)) ? 'checked' : ''}
+                        onchange="alternarAlunoSelecionado(${aluno.id}, this.checked)"
+                        aria-label="Selecionar ${escaparHtml(aluno.nome)}"
+                    >
+                </td>
+
+                <td>
+
+                    <div class="student">
+
+                        <div class="avatar">
+                            ${escaparHtml(inicial)}
+                        </div>
+
+                        <strong>
+                            ${escaparHtml(aluno.nome)}
+                        </strong>
+
+                    </div>
+
+                </td>
+
+                <td>
+                    ${escaparHtml(aluno.matricula)}
+                </td>
+
+                <td>
+                    ${escaparHtml(aluno.turma_nome || aluno.turma_id)}
+                </td>
+
+                <td>
+                    ${escaparHtml(aluno.email || '—')}
+                </td>
+
+                <td>
+                    <button
+                        type="button"
+                        onclick="baixarQrCode(${aluno.id}, '${escaparHtml(aluno.nome).replace(/'/g, '&#039;')}')"
+                        style="border:0;background:transparent;color:#2864e8;font-weight:bold;cursor:pointer"
+                        title="Baixar QR Code"
+                    >⬇️ QR</button>
+                </td>
+
+                <td>
+                    <span class="status" style="${aluno.ativo ? '' : 'background:#fff0f0;color:#c62828'}">
+                        ${aluno.ativo ? 'Ativo' : 'Inativo'}
+                    </span>
+                </td>
+
+                <td class="action-cell">
+                    <button
+                        type="button"
+                        class="delete-button"
+                        onclick="excluirAluno(${aluno.id}, '${escaparHtml(aluno.nome).replace(/'/g, '&#039;')}')"
+                        title="Excluir aluno"
+                    >🗑️ Excluir</button>
+                </td>
+
+            </tr>
+        `;
+
+    }).join('');
+
+    atualizarSelecaoVisual();
+}
+
+
+/* =========================================
+   SELEÇÃO E EXCLUSÃO
+========================================= */
+
+function atualizarSelecaoVisual() {
+    const selecionados = [...alunosSelecionados].filter(id =>
+        alunos.some(aluno => Number(aluno.id) === Number(id))
+    );
+
+    alunosSelecionados = new Set(selecionados.map(Number));
+
+    const quantidade = alunosSelecionados.size;
+    const ferramentas = document.getElementById('selectionTools');
+    const contador = document.getElementById('selectedCount');
+    const selecionarTodos = document.getElementById('selecionarTodos');
+
+    contador.textContent = `${quantidade} selecionado${quantidade === 1 ? '' : 's'}`;
+    ferramentas.classList.toggle('show', quantidade > 0);
+
+    const visiveis = [...document.querySelectorAll('.check-aluno')];
+    const marcados = visiveis.filter(c => c.checked).length;
+    selecionarTodos.checked = visiveis.length > 0 && marcados === visiveis.length;
+    selecionarTodos.indeterminate = marcados > 0 && marcados < visiveis.length;
+}
+
+function alternarAlunoSelecionado(id, marcado) {
+    id = Number(id);
+    if (marcado) {
+        alunosSelecionados.add(id);
+    } else {
+        alunosSelecionados.delete(id);
+    }
+    atualizarSelecaoVisual();
+}
+
+function alternarTodos(marcado) {
+    document.querySelectorAll('.check-aluno').forEach(checkbox => {
+        const id = Number(checkbox.value);
+        checkbox.checked = marcado;
+        if (marcado) {
+            alunosSelecionados.add(id);
+        } else {
+            alunosSelecionados.delete(id);
+        }
+    });
+    atualizarSelecaoVisual();
+}
+
+async function excluirAluno(id, nome) {
+    const confirmar = window.confirm(`Tem certeza que deseja excluir o aluno "${nome}"?\n\nO aluno será removido da lista de alunos ativos, mas o histórico de presença será preservado.`);
+    if (!confirmar) return;
+
+    try {
+        const resposta = await fetch(`/api/alunos/${id}`, {
+            method: 'DELETE',
+            headers: cabecalhosAutenticados()
+        });
+        const resultado = await resposta.json().catch(() => ({}));
+
+        if (!resposta.ok) {
+            throw new Error(resultado.erro || 'Não foi possível excluir o aluno.');
+        }
+
+        alunosSelecionados.delete(Number(id));
+        mostrarAlerta('success', '✅ ' + (resultado.mensagem || 'Aluno excluído com sucesso.'));
+        await carregarAlunos();
+    } catch (erro) {
+        console.error(erro);
+        mostrarAlerta('error', '❌ ' + erro.message);
+    }
+}
+
+async function excluirSelecionados() {
+    const ids = [...alunosSelecionados].map(Number).filter(Number.isInteger);
+    if (!ids.length) return;
+
+    const confirmar = window.confirm(`Tem certeza que deseja excluir ${ids.length} aluno${ids.length === 1 ? '' : 's'} selecionado${ids.length === 1 ? '' : 's'}?\n\nO histórico de presença será preservado.`);
+    if (!confirmar) return;
+
+    const botao = document.getElementById('deleteSelectedButton');
+    botao.disabled = true;
+    botao.textContent = '⏳ Excluindo...';
+
+    try {
+        const resposta = await fetch('/api/alunos', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                ...cabecalhosAutenticados()
+            },
+            body: JSON.stringify({ ids })
+        });
+
+        const resultado = await resposta.json().catch(() => ({}));
+        if (!resposta.ok) {
+            throw new Error(resultado.erro || 'Não foi possível excluir os alunos.');
+        }
+
+        alunosSelecionados.clear();
+        mostrarAlerta('success', '✅ ' + (resultado.mensagem || 'Alunos excluídos com sucesso.'));
+        await carregarAlunos();
+    } catch (erro) {
+        console.error(erro);
+        mostrarAlerta('error', '❌ ' + erro.message);
+    } finally {
+        botao.disabled = false;
+        botao.textContent = '🗑️ Excluir selecionados';
+    }
+}
+
+/* =========================================
+   BUSCA
+========================================= */
+
+document.getElementById('search').addEventListener(
+    'input',
+    function () {
+
+        const texto = this.value.toLowerCase();
+
+        const filtrados = alunos.filter(aluno =>
+
+            aluno.nome.toLowerCase().includes(texto) ||
+
+            String(aluno.matricula)
+                .toLowerCase()
+                .includes(texto)
+
+        );
+
+        mostrarAlunos(filtrados);
+
+    }
+);
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+function abrirModal() {
+
+    document
+        .getElementById('modal')
+        .classList.add('show');
+
+}
+
+
+function fecharModal() {
+
+    document
+        .getElementById('modal')
+        .classList.remove('show');
+
+}
+
+
+/* =========================================
+   CADASTRAR ALUNO
+========================================= */
+
+document
+    .getElementById('formAluno')
+    .addEventListener('submit', async function (evento) {
+
+        evento.preventDefault();
+
+
+        const dados = {
+
+            nome:
+                document
+                    .getElementById('nome')
+                    .value
+                    .trim(),
+
+            matricula:
+                document
+                    .getElementById('matricula')
+                    .value
+                    .trim(),
+
+            turma_id:
+                Number(
+                    document
+                        .getElementById('turma_id')
+                        .value
+                ),
+
+            email:
+                document
+                    .getElementById('email')
+                    .value
+                    .trim(),
+
+            whatsapp:
+                document
+                    .getElementById('whatsapp')
+                    .value
+                    .trim()
+
+        };
+
+
+        try {
+
+            const resposta = await fetch(
+                '/api/alunos',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...cabecalhosAutenticados()
+                    },
+
+                    body: JSON.stringify(dados)
+                }
+            );
+
+
+            const resultado =
+                await resposta.json();
+
+
+            if (!resposta.ok) {
+
+                throw new Error(
+                    resultado.erro ||
+                    'Erro ao cadastrar aluno.'
+                );
+
+            }
+
+
+            mostrarAlerta(
+                'success',
+                '✅ Aluno cadastrado com sucesso!'
+            );
+
+
+            document
+                .getElementById('formAluno')
+                .reset();
+
+
+            fecharModal();
+
+
+            await carregarAlunos();
+
+
+        } catch (erro) {
+
+            console.error(erro);
+
+            mostrarAlerta(
+                'error',
+                '❌ ' + erro.message
+            );
+
+        }
+
+    });
+
+
+/* =========================================
+   AVISO
+========================================= */
+
+function mostrarAlerta(tipo, mensagem) {
+
+    const alerta =
+        document.getElementById('alert');
+
+    alerta.className =
+        'alert show ' + tipo;
+
+    alerta.textContent =
+        mensagem;
+
+
+    setTimeout(() => {
+
+        alerta.classList.remove('show');
+
+    }, 5000);
+
+}
+
+
+/* =========================================
+   INICIAR
+========================================= */
+
+(async () => {
+    if (!(await exigirAutenticacao())) return;
+    try {
+        await carregarTurmas();
+        await carregarAlunos();
+    } catch (erro) {
+        console.error(erro);
+        mostrarAlerta('error', '❌ ' + erro.message);
+    }
+})();
+
+</script>
+
+</body>
+</html>

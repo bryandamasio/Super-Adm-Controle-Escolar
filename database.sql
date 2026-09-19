@@ -1,0 +1,110 @@
+CREATE DATABASE IF NOT EXISTS sistema_presenca CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE sistema_presenca;
+
+CREATE TABLE IF NOT EXISTS escolas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(180) NOT NULL,
+  cnpj VARCHAR(30) NULL UNIQUE,
+  email VARCHAR(150) NULL,
+  telefone VARCHAR(30) NULL,
+  ativa BOOLEAN NOT NULL DEFAULT TRUE,
+  valor_mensal DECIMAL(10,2) NOT NULL DEFAULT 0,
+  vencimento_dia TINYINT UNSIGNED NOT NULL DEFAULT 10,
+  ultimo_pagamento DATE NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL,
+  tipo ENUM('SUPER_ADMIN','ADMIN','PROFESSOR','VICE_DIRECAO','COORDENACAO','SECRETARIA') NOT NULL,
+  escola_id INT NULL,
+  ativo BOOLEAN DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_usuario_escola FOREIGN KEY (escola_id) REFERENCES escolas(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS turmas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50) NOT NULL,
+  ano VARCHAR(20) NOT NULL,
+  escola_id INT NOT NULL,
+  ativo BOOLEAN DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_turma_escola FOREIGN KEY (escola_id) REFERENCES escolas(id) ON DELETE RESTRICT,
+  KEY idx_turma_escola (escola_id)
+);
+
+CREATE TABLE IF NOT EXISTS alunos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  matricula VARCHAR(50) NOT NULL,
+  turma_id INT NOT NULL,
+  escola_id INT NOT NULL,
+  email VARCHAR(150) NULL,
+  whatsapp VARCHAR(30) NULL,
+  codigo_qr VARCHAR(100) NOT NULL UNIQUE,
+  ativo BOOLEAN DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_aluno_escola_matricula (escola_id, matricula),
+  CONSTRAINT fk_aluno_turma FOREIGN KEY (turma_id) REFERENCES turmas(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_aluno_escola FOREIGN KEY (escola_id) REFERENCES escolas(id) ON DELETE RESTRICT,
+  KEY idx_aluno_escola (escola_id)
+);
+
+CREATE TABLE IF NOT EXISTS professores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  email VARCHAR(150) NOT NULL,
+  telefone VARCHAR(30) NULL,
+  registro VARCHAR(50) NULL,
+  escola_id INT NOT NULL,
+  usuario_id INT NULL UNIQUE,
+  ativo BOOLEAN NOT NULL DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_prof_email_escola (escola_id, email),
+  UNIQUE KEY uq_prof_registro_escola (escola_id, registro),
+  CONSTRAINT fk_prof_escola FOREIGN KEY (escola_id) REFERENCES escolas(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_prof_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS registros (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  aluno_id INT NOT NULL,
+  tipo ENUM('ENTRADA','SAIDA') NOT NULL,
+  data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  dispositivo VARCHAR(100) NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_registro_aluno FOREIGN KEY (aluno_id) REFERENCES alunos(id) ON DELETE RESTRICT,
+  KEY idx_registro_aluno_data (aluno_id,data_hora)
+);
+
+CREATE TABLE IF NOT EXISTS ocorrencias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  aluno_id INT NOT NULL,
+  tipo ENUM('SEM_SAIDA','SAIDA_ANTECIPADA') NOT NULL,
+  descricao TEXT NULL,
+  status ENUM('PENDENTE','EM_ANALISE','RESOLVIDA') NOT NULL DEFAULT 'PENDENTE',
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  resolvido_por INT NULL,
+  CONSTRAINT fk_ocorrencia_aluno FOREIGN KEY (aluno_id) REFERENCES alunos(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_ocorrencia_usuario FOREIGN KEY (resolvido_por) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS pagamentos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  escola_id INT NOT NULL,
+  valor DECIMAL(10,2) NOT NULL,
+  referencia VARCHAR(100) NULL,
+  status ENUM('PENDENTE','PAGO','CANCELADO') NOT NULL DEFAULT 'PENDENTE',
+  pago_em DATETIME NULL,
+  observacao VARCHAR(255) NULL,
+  criado_por INT NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_pagamento_escola FOREIGN KEY (escola_id) REFERENCES escolas(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_pagamento_usuario FOREIGN KEY (criado_por) REFERENCES usuarios(id) ON DELETE SET NULL,
+  KEY idx_pagamento_escola_status (escola_id,status)
+);

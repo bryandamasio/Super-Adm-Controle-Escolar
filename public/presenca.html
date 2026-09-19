@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar presença | Controle Escolar</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f8ff;
+            color: #17213a;
+        }
+
+        header {
+            min-height: 75px;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: #fff;
+            border-bottom: 1px solid #e4e9f3;
+        }
+
+        h1 { font-size: 22px; margin: 0 0 5px; }
+        header p { margin: 0; color: #71809d; font-size: 12px; }
+
+        a {
+            color: #fff;
+            background: #2864e8;
+            padding: 11px 16px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        main {
+            width: min(1100px, 100%);
+            padding: 35px 20px;
+            margin: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e4e9f3;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 8px 24px rgba(40,64,100,.06);
+        }
+
+        .icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: #edf3ff;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 20px 0 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #dce3ef;
+            border-radius: 9px;
+            font-size: 16px;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #b8d0ff;
+            border-color: #2864e8;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 12px;
+            border: 0;
+            border-radius: 9px;
+            padding: 14px;
+            background: #2864e8;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        button.secondary {
+            background: #eef3ff;
+            color: #2864e8;
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        #mensagem {
+            min-height: 24px;
+            margin: 18px 0 0;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .sucesso { background: #eafaf1; color: #168445; }
+        .erro { background: #fff0f0; color: #c62828; }
+
+        .hint {
+            color: #71809d;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        #reader {
+            width: 100%;
+            min-height: 330px;
+            border: 1px solid #e4e9f3;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0f1115;
+        }
+
+        #reader video {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+        }
+
+        .camera-bar {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .status {
+            padding: 11px 12px;
+            border-radius: 9px;
+            background: #f1f5ff;
+            color: #48607f;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .status.ok {
+            background: #eafaf1;
+            color: #168445;
+        }
+
+        .status.error {
+            background: #fff0f0;
+            color: #c62828;
+        }
+
+        .small {
+            font-size: 12px;
+            color: #71809d;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 850px) {
+            header {
+                padding: 16px 20px;
+                flex-wrap: wrap;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>📱 Registrar presença</h1>
+        <p>Leia o QR Code do crachá ou use o leitor USB.</p>
+    </div>
+
+    <a href="dashboard.html">← Dashboard</a>
+</header>
+
+<main>
+
+    <div class="grid">
+
+        <section class="card">
+            <div class="icon">📷</div>
+
+            <h2>Registrar entrada ou saída</h2>
+
+            <p class="hint">
+                Aponte a câmera para o QR Code do aluno.
+                A leitura será feita automaticamente.
+                O leitor USB continua funcionando pelo campo abaixo.
+            </p>
+
+            <form id="formPresenca">
+                <label for="codigoQr">Código do QR Code</label>
+
+                <input
+                    id="codigoQr"
+                    autocomplete="off"
+                    autofocus
+                    placeholder="ALUNO-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                    required
+                >
+
+                <button id="btnRegistrar" type="submit">
+                    Registrar presença
+                </button>
+            </form>
+
+            <p id="mensagem" role="status"></p>
+        </section>
+
+
+        <section class="card">
+
+            <h2>📷 Leitor de presença</h2>
+
+            <p class="hint">
+                Permita o acesso à câmera quando o navegador solicitar.
+                Em computador, será usada a webcam disponível.
+            </p>
+
+            <div id="reader"></div>
+
+            <div class="camera-bar">
+
+                <select id="cameraSelect" disabled>
+                    <option value="">Selecionar câmera</option>
+                </select>
+
+                <button
+                    id="btnIniciarCamera"
+                    type="button"
+                >
+                    Abrir câmera
+                </button>
+
+                <button
+                    id="btnPararCamera"
+                    class="secondary"
+                    type="button"
+                    disabled
+                >
+                    Fechar câmera
+                </button>
+
+            </div>
+
+            <div
+                id="cameraStatus"
+                class="status"
+                style="margin-top:12px"
+            >
+                A câmera está fechada.
+            </div>
+
+            <div class="small">
+                Endereço atual:
+                <strong id="origemAtual"></strong>
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script src="js/auth.js"></script>
+
+<!-- Biblioteca de leitura de QR Code -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+<script>
+(() => {
+
+    const campo = document.getElementById('codigoQr');
+    const mensagem = document.getElementById('mensagem');
+    const form = document.getElementById('formPresenca');
+    const btnRegistrar = document.getElementById('btnRegistrar');
+
+    const readerElement = document.getElementById('reader');
+    const cameraSelect = document.getElementById('cameraSelect');
+    const btnIniciar = document.getElementById('btnIniciarCamera');
+    const btnParar = document.getElementById('btnPararCamera');
+    const cameraStatus = document.getElementById('cameraStatus');
+    const origemAtual = document.getElementById('origemAtual');
+
+    let scanner = null;
+    let cameraAtiva = false;
+    let processando = false;
+    let ultimoQr = '';
+    let ultimoQrEm = 0;
+
+    origemAtual.textContent = window.location.origin;
+
+
+    function setMensagem(texto, tipo = '') {
+        mensagem.className = tipo;
+        mensagem.textContent = texto;
+    }
+
+
+    function setCameraStatus(texto, tipo = '') {
+        cameraStatus.className = 'status' + (tipo ? ' ' + tipo : '');
+        cameraStatus.textContent = texto;
+    }
+
+
+    async function registrarCodigo(codigo) {
+
+        const valor = String(codigo || '').trim();
+
+        if (!valor || processando) {
+            return;
+        }
+
+        processando = true;
+        btnRegistrar.disabled = true;
+
+        setMensagem('Registrando presença...');
+
+        try {
+
+            const resposta = await fetch(
+                '/api/presencas/registrar',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...cabecalhosAutenticados()
+                    },
+
+                    body: JSON.stringify({
+                        codigo_qr: valor
+                    })
+                }
+            );
+
+            let dados = {};
+
+            try {
+                dados = await resposta.json();
+            } catch {
+                dados = {};
+            }
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dados.erro || 'Não foi possível registrar a presença.'
+                );
+            }
+
+            let texto =
+                `${dados.mensagem || 'Presença registrada.'} ` +
+                `Aluno: ${dados.registro?.aluno?.nome || 'Aluno identificado'}.`;
+
+            if (dados.registro?.ocorrencia) {
+                texto += ' Atenção: saída antecipada registrada.';
+            }
+
+            setMensagem(texto, 'sucesso');
+
+            campo.value = '';
+            campo.focus();
+
+            // Evita duas leituras seguidas do mesmo QR.
+            ultimoQr = valor;
+            ultimoQrEm = Date.now();
+
+        } catch (erro) {
+
+            console.error('Erro ao registrar presença:', erro);
+
+            setMensagem(
+                erro.message || 'Erro ao registrar presença.',
+                'erro'
+            );
+
+        } finally {
+
+            setTimeout(() => {
+                processando = false;
+                btnRegistrar.disabled = false;
+            }, 1200);
+        }
+    }
+
+
+    form.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+        await registrarCodigo(campo.value);
+    });
+
+
+    async function listarCameras() {
+
+        if (!navigator.mediaDevices?.enumerateDevices) {
+            setCameraStatus(
+                'Seu navegador não disponibiliza a lista de câmeras.',
+                'error'
+            );
+            return [];
+        }
+
+        try {
+
+            const dispositivos =
+                await navigator.mediaDevices.enumerateDevices();
+
+            const cameras =
+                dispositivos.filter(
+                    dispositivo => dispositivo.kind === 'videoinput'
+                );
+
+            cameraSelect.innerHTML =
+                '<option value="">Selecionar câmera</option>';
+
+            cameras.forEach((camera, indice) => {
+
+                const option =
+                    document.createElement('option');
+
+                option.value = camera.deviceId;
+
+                option.textContent =
+                    camera.label ||
+                    `Câmera ${indice + 1}`;
+
+                cameraSelect.appendChild(option);
+            });
+
+            cameraSelect.disabled = cameras.length === 0;
+
+            return cameras;
+
+        } catch (erro) {
+
+            console.error(
+                'Erro ao listar câmeras:',
+                erro
+            );
+
+            setCameraStatus(
+                `Não foi possível listar as câmeras: ${erro.name || erro.message}`,
+                'error'
+            );
+
+            return [];
+        }
+    }
+
+
+    async function pedirPermissaoECameras() {
+
+        if (!window.isSecureContext) {
+
+            throw new Error(
+                'A câmera só pode ser usada em uma origem segura. ' +
+                'Use http://localhost:3000 ou HTTPS.'
+            );
+        }
+
+        if (!navigator.mediaDevices?.getUserMedia) {
+
+            throw new Error(
+                'O navegador não disponibiliza acesso à câmera.'
+            );
+        }
+
+        /*
+         * Primeiro usamos vídeo genérico.
+         * Isso é mais compatível com webcam de computador
+         * do que exigir "environment" (câmera traseira).
+         */
+
+        let stream = null;
+
+        try {
+
+            stream =
+                await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+
+        } catch (erro) {
+
+            console.error(
+                'getUserMedia falhou:',
+                erro
+            );
+
+            throw erro;
+
+        } finally {
+
+            if (stream) {
+                stream.getTracks().forEach(
+                    track => track.stop()
+                );
+            }
+        }
+
+        return listarCameras();
+    }
+
+
+    async function iniciarCamera() {
+
+        if (cameraAtiva) {
+            return;
+        }
+
+        try {
+
+            setCameraStatus(
+                'Verificando câmera disponível...'
+            );
+
+            const cameras =
+                await pedirPermissaoECameras();
+
+            if (!cameras.length) {
+
+                throw new Error(
+                    'Nenhuma câmera foi encontrada pelo navegador.'
+                );
+            }
+
+            /*
+             * Se o usuário já escolheu uma câmera, usa ela.
+             * Caso contrário, usa a primeira disponível.
+             */
+
+            let cameraId = cameraSelect.value;
+
+            if (!window.Html5Qrcode) {
+
+                throw new Error(
+                    'A biblioteca de leitura do QR Code não foi carregada.'
+                );
+            }
+
+            scanner = new Html5Qrcode(
+                'reader',
+                {
+                    verbose: false
+                }
+            );
+
+            /*
+             * A biblioteca aceita uma configuração de câmera.
+             * Isso evita o erro "cameraIdOrConfig is required"
+             * quando o navegador não entrega um deviceId válido.
+             */
+            const cameraConfig = cameraId
+                ? { deviceId: { exact: cameraId } }
+                : { facingMode: "user" };
+
+            await scanner.start(
+
+                cameraConfig,
+
+                {
+                    fps: 10,
+
+                    qrbox: {
+                        width: 250,
+                        height: 250
+                    },
+
+                    aspectRatio: 1.0,
+
+                    rememberLastUsedCamera: true
+
+                },
+
+                async (decodedText) => {
+
+                    const agora = Date.now();
+
+                    /*
+                     * Ignora a mesma leitura por 2,5 segundos.
+                     */
+
+                    if (
+                        decodedText === ultimoQr &&
+                        agora - ultimoQrEm < 2500
+                    ) {
+                        return;
+                    }
+
+                    if (processando) {
+                        return;
+                    }
+
+                    await registrarCodigo(
+                        decodedText
+                    );
+                },
+
+                () => {
+                    /*
+                     * Durante a procura do QR,
+                     * os erros são normais.
+                     */
+                }
+            );
+
+            cameraAtiva = true;
+
+            btnIniciar.disabled = true;
+            btnParar.disabled = false;
+            cameraSelect.disabled = true;
+
+            setCameraStatus(
+                '✅ Câmera ativa. Aponte o QR Code para o quadro da câmera.',
+                'ok'
+            );
+
+        } catch (erro) {
+
+            console.error(
+                'ERRO COMPLETO DA CÂMERA:',
+                erro
+            );
+
+            if (scanner) {
+
+                try {
+                    await scanner.clear();
+                } catch {}
+            }
+
+            scanner = null;
+            cameraAtiva = false;
+
+            btnIniciar.disabled = false;
+            btnParar.disabled = true;
+
+            let detalhe =
+                `${erro.name || 'Erro'}: ${erro.message || erro}`;
+
+            if (erro.name === 'NotAllowedError') {
+
+                detalhe +=
+                    ' Verifique se o Chrome tem permissão para usar a câmera.';
+
+            } else if (erro.name === 'NotFoundError') {
+
+                detalhe +=
+                    ' Nenhuma webcam foi encontrada pelo navegador.';
+
+            } else if (erro.name === 'NotReadableError') {
+
+                detalhe +=
+                    ' A câmera pode estar sendo usada por outro programa.';
+
+            } else if (erro.name === 'OverconstrainedError') {
+
+                detalhe +=
+                    ' A configuração solicitada não é compatível com a câmera.';
+
+            }
+
+            setCameraStatus(
+                `❌ ${detalhe}`,
+                'error'
+            );
+        }
+    }
+
+
+    async function pararCamera() {
+
+        if (!scanner) {
+            return;
+        }
+
+        try {
+
+            await scanner.stop();
+
+            await scanner.clear();
+
+        } catch (erro) {
+
+            console.warn(
+                'Erro ao parar câmera:',
+                erro
+            );
+
+        } finally {
+
+            scanner = null;
+            cameraAtiva = false;
+
+            btnIniciar.disabled = false;
+            btnParar.disabled = true;
+            cameraSelect.disabled = false;
+
+            setCameraStatus(
+                'A câmera está fechada.'
+            );
+        }
+    }
+
+
+    btnIniciar.addEventListener(
+        'click',
+        iniciarCamera
+    );
+
+    btnParar.addEventListener(
+        'click',
+        pararCamera
+    );
+
+
+    cameraSelect.addEventListener(
+        'change',
+        async () => {
+
+            if (!cameraSelect.value) {
+                return;
+            }
+
+            if (cameraAtiva) {
+                await pararCamera();
+            }
+
+            setCameraStatus(
+                'Câmera selecionada. Clique em "Abrir câmera".'
+            );
+        }
+    );
+
+
+    window.addEventListener(
+        'beforeunload',
+        () => {
+
+            if (scanner) {
+                scanner.stop().catch(() => {});
+            }
+        }
+    );
+
+
+    document.addEventListener(
+        'visibilitychange',
+        () => {
+
+            if (
+                document.hidden &&
+                cameraAtiva
+            ) {
+                pararCamera();
+            }
+        }
+    );
+
+
+    async function iniciarPagina() {
+
+        try {
+
+            if (
+                typeof exigirAutenticacao === 'function' &&
+                !(await exigirAutenticacao())
+            ) {
+                return;
+            }
+
+            campo.focus();
+
+            /*
+             * Não abrimos a câmera automaticamente.
+             * Primeiro listamos as câmeras para o usuário escolher.
+             */
+
+            const cameras = await listarCameras();
+
+            if (cameras.length) {
+
+                setCameraStatus(
+                    'Câmera encontrada. Escolha a câmera e clique em "Abrir câmera".',
+                    'ok'
+                );
+
+            } else {
+
+                setCameraStatus(
+                    'Nenhuma câmera foi encontrada ainda. Clique em "Abrir câmera" para solicitar acesso.',
+                );
+            }
+
+        } catch (erro) {
+
+            console.error(
+                'Erro ao iniciar página:',
+                erro
+            );
+
+            setCameraStatus(
+                `Não foi possível preparar a câmera: ${erro.message}`,
+                'error'
+            );
+        }
+    }
+
+
+    iniciarPagina();
+
+})();
+</script>
+
+</body>
+</html>

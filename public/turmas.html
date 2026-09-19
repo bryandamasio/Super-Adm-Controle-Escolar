@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turmas | Controle Escolar</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}body{margin:0;background:#f5f8ff;color:#17213a}.top{height:75px;background:#fff;border-bottom:1px solid #e4e9f3;display:flex;justify-content:space-between;align-items:center;padding:0 35px}.top h1{font-size:22px;margin:0}.top p{font-size:12px;color:#7c88a0;margin:5px 0 0}.back,.btn{background:#2864e8;color:#fff;text-decoration:none;border:0;border-radius:9px;padding:11px 16px;cursor:pointer;font-weight:bold}.content{padding:30px 35px;max-width:1100px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1.5fr;gap:22px}.card{background:#fff;border:1px solid #e4e9f3;border-radius:14px;padding:22px}.card h2{font-size:17px;margin:0 0 18px}.field{margin-bottom:14px}.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:6px}.field input,.field select{width:100%;padding:11px 12px;border:1px solid #dce3ef;border-radius:8px}.btn{width:100%;margin-top:6px}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px 10px;border-bottom:1px solid #edf0f5;text-align:left;font-size:12px}.badge{padding:4px 8px;border-radius:20px;font-size:10px;font-weight:bold;background:#eafaf1;color:#168445}.badge.off{background:#fff0f0;color:#c62828}.alert{margin-bottom:15px;padding:12px;border-radius:9px;display:none;font-size:12px}.alert.show{display:block}.ok{background:#eafaf1;color:#168445}.err{background:#fff0f0;color:#c62828}@media(max-width:800px){.grid{grid-template-columns:1fr}.top{padding:0 18px}.content{padding:20px 15px}}
+</style>
+</head>
+<body>
+<header class="top"><div><h1>🏫 Turmas</h1><p>Cadastre e organize as turmas da escola</p></div><a class="back" href="dashboard.html">← Dashboard</a></header>
+<main class="content">
+<div id="alert" class="alert"></div>
+<div class="grid">
+<section class="card">
+<h2>Nova turma</h2>
+<form id="formTurma">
+<div class="field"><label>Nome da turma *</label><input id="nome" required placeholder="Ex.: 8º Ano A"></div>
+<div class="field"><label>Ano letivo *</label><input id="ano" required placeholder="Ex.: 2026"></div>
+<button class="btn" type="submit">Cadastrar turma</button>
+</form>
+</section>
+<section class="card">
+<h2>Turmas cadastradas</h2>
+<div style="overflow:auto"><table class="table"><thead><tr><th>Turma</th><th>Ano</th><th>Alunos</th><th>Status</th></tr></thead><tbody id="lista"></tbody></table></div>
+</section>
+</div>
+</main>
+<script src="js/auth.js"></script>
+<script>
+const lista=document.getElementById('lista'), alertBox=document.getElementById('alert');
+function aviso(msg,ok=true){alertBox.className='alert show '+(ok?'ok':'err');alertBox.textContent=msg;setTimeout(()=>alertBox.classList.remove('show'),4500)}
+async function carregar(){if(!(await exigirAutenticacao()))return;try{const r=await fetch('/api/turmas',{headers:cabecalhosAutenticados()});const d=await r.json();if(!r.ok)throw Error(d.erro||'Erro');lista.innerHTML=d.length?d.map(t=>`<tr><td>${t.nome}</td><td>${t.ano}</td><td>${t.total_alunos}</td><td><span class="badge ${t.ativo?'':'off'}">${t.ativo?'Ativa':'Inativa'}</span></td></tr>`).join(''):`<tr><td colspan="4">Nenhuma turma cadastrada.</td></tr>`}catch(e){lista.innerHTML='<tr><td colspan="4">Não foi possível carregar as turmas.</td></tr>'}}
+document.getElementById('formTurma').addEventListener('submit',async e=>{e.preventDefault();try{const r=await fetch('/api/turmas',{method:'POST',headers:{'Content-Type':'application/json',...cabecalhosAutenticados()},body:JSON.stringify({nome:document.getElementById('nome').value,ano:document.getElementById('ano').value})});const d=await r.json();if(!r.ok)throw Error(d.erro||'Erro');e.target.reset();aviso('✅ Turma cadastrada com sucesso.');carregar()}catch(err){aviso('❌ '+err.message,false)}})
+carregar();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "sistema-presenca",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "criar-admin": "node criar-admin.js",
+    "check": "node --check server.js && node --check middleware/autenticar.js && node --check routes/alunos.js && node --check routes/auth.js && node --check routes/presencas.js && node --check routes/turmas.js && node --check routes/usuarios.js && node --check routes/professores.js && node --check routes/escolas.js && node --check routes/ocorrencias.js && node --check criar-admin.js && node --check criar-super-admin.js",
+    "criar-super-admin": "node criar-super-admin.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.23.3",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
