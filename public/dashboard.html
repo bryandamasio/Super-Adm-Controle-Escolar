@@ -38,6 +38,18 @@
             top: 0;
             bottom: 0;
             z-index: 10;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #d8e0ee;
+            border-radius: 10px;
         }
 
         .logo {
@@ -547,31 +559,31 @@
             }
         }
 
-        @media (max-width: 750px) {
+        @media (max-width: 600px) {
             .sidebar {
-                width: 70px;
-                padding: 20px 10px;
+                width: 255px;
+                padding: 20px 14px;
             }
 
             .logo-text,
             .menu-title,
             .menu a span:not(.menu-icon),
             .sidebar-bottom {
-                display: none;
+                display: block;
             }
 
             .logo {
-                justify-content: center;
+                justify-content: flex-start;
                 padding-bottom: 25px;
             }
 
             .menu a {
-                justify-content: center;
+                justify-content: flex-start;
             }
 
             .main {
-                margin-left: 70px;
-                width: calc(100% - 70px);
+                margin-left: 255px;
+                width: calc(100% - 255px);
             }
 
             .topbar {
