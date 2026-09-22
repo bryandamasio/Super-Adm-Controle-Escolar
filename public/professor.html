@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Painel do Professor | Controle Escolar</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:#f5f8ff;color:#17213a}
+.top{height:75px;background:#fff;border-bottom:1px solid #e4e9f3;display:flex;align-items:center;justify-content:space-between;padding:0 35px}
+.brand h1{font-size:21px;margin:0}.brand p{font-size:12px;color:#7c88a0;margin:5px 0 0}
+.sair{border:0;background:#2864e8;color:#fff;padding:11px 16px;border-radius:9px;font-weight:bold;cursor:pointer}
+main{max-width:1100px;margin:auto;padding:30px 20px}
+.welcome{margin-bottom:22px}.welcome h2{margin:0 0 7px;font-size:25px}.welcome p{margin:0;color:#71809d}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}.card{background:#fff;border:1px solid #e4e9f3;border-radius:14px;padding:24px;box-shadow:0 5px 20px rgba(40,64,100,.04)}
+.status{padding:15px;border-radius:10px;background:#edf3ff;color:#2864e8;margin:16px 0;font-weight:bold}.status.ok{background:#eafaf1;color:#168445}.status.warn{background:#fff4e8;color:#b86b00}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:12px}.info div{background:#fafbfe;border:1px solid #edf0f5;border-radius:10px;padding:14px}.info small{display:block;color:#8792a9;margin-bottom:5px}.info strong{font-size:17px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.btn{border:0;border-radius:10px;padding:14px;font-weight:bold;cursor:pointer;background:#2864e8;color:#fff}.btn:disabled{opacity:.55;cursor:not-allowed}.btn.saida{background:#17213a}
+.alert{min-height:22px;margin-top:15px;padding:12px;border-radius:9px;display:none}.alert.show{display:block}.alert.ok{background:#eafaf1;color:#168445}.alert.err{background:#fff0f0;color:#c62828}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0f5;font-size:12px}.table th{color:#7d89a2;font-weight:normal}.badge{padding:5px 9px;border-radius:20px;background:#eafaf1;color:#168445;font-weight:bold;font-size:10px}
+@media(max-width:800px){.top{padding:0 18px}.grid{grid-template-columns:1fr}.actions,.info{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand"><h1>👨‍🏫 Painel do Professor</h1><p>Controle de presença pessoal</p></div><button class="sair" onclick="sair()">Sair</button></header>
+<main>
+<section class="welcome"><h2 id="saudacao">Olá!</h2><p>Registre sua entrada e saída. Você só poderá consultar seus próprios registros.</p></section>
+<div class="grid">
+<section class="card">
+<h3>Presença de hoje</h3>
+<div id="status" class="status">Carregando...</div>
+<div class="info"><div><small>Data</small><strong id="dataHoje">—</strong></div><div><small>Situação</small><strong id="situacao">—</strong></div><div><small>Entrada</small><strong id="entrada">—</strong></div><div><small>Saída</small><strong id="saida">—</strong></div></div>
+<div class="actions"><button id="btnEntrada" class="btn" onclick="registrarEntrada()">Registrar entrada</button><button id="btnSaida" class="btn saida" onclick="registrarSaida()" disabled>Registrar saída</button></div>
+<div id="alert" class="alert"></div>
+</section>
+<section class="card"><h3>Meu perfil</h3><div class="info"><div><small>Professor</small><strong id="nomeProfessor">—</strong></div><div><small>Registro</small><strong id="registro">—</strong></div><div><small>Escola</small><strong id="escola">—</strong></div><div><small>Perfil</small><strong>Professor</strong></div></div></section>
+</div>
+<section class="card" style="margin-top:20px"><h3>Meu histórico</h3><div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Entrada</th><th>Saída</th><th>Status</th></tr></thead><tbody id="historico"><tr><td colspan="4">Carregando...</td></tr></tbody></table></div></section>
+</main>
+<script src="js/auth.js"></script>
+<script>
+let dadosPresenca=null;
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function hora(v){if(!v)return '—';const d=new Date(v);return isNaN(d)?String(v).slice(11,16):d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
+function data(v){if(!v)return '—';const s=String(v).slice(0,10).split('-');return s.length===3?s.reverse().join('/'):v;}
+function aviso(msg,ok=true){const a=document.getElementById('alert');a.className='alert show '+(ok?'ok':'err');a.textContent=msg;setTimeout(()=>a.classList.remove('show'),5000)}
+function render(d){
+ dadosPresenca=d; const h=d.hoje;
+ document.getElementById('nomeProfessor').textContent=dadosPresenca.usuarioNome||'Professor';
+ document.getElementById('registro').textContent=d.professor.registro||'—';
+ document.getElementById('escola').textContent=d.professor.escola||'PEI Nello Lorenzon';
+ document.getElementById('dataHoje').textContent=new Date().toLocaleDateString('pt-BR');
+ document.getElementById('entrada').textContent=hora(h?.entrada); document.getElementById('saida').textContent=hora(h?.saida);
+ const st=document.getElementById('status'); const sit=document.getElementById('situacao');
+ if(h?.saida){st.className='status ok';st.textContent='Presença completa';sit.textContent='Registrada';}
+ else if(h?.entrada){st.className='status warn';st.textContent='Entrada registrada — falta registrar saída';sit.textContent='Em aberto';}
+ else{st.className='status';st.textContent='Entrada ainda não registrada';sit.textContent='Aguardando entrada';}
+ document.getElementById('btnEntrada').disabled=!!h?.entrada;
+ document.getElementById('btnSaida').disabled=!h?.entrada||!!h?.saida;
+ document.getElementById('historico').innerHTML=d.historico?.length?d.historico.map(x=>'<tr><td>'+data(x.data)+'</td><td>'+hora(x.entrada)+'</td><td>'+hora(x.saida)+'</td><td><span class="badge">'+esc(x.status==='COMPLETA'?'Completa':'Em aberto')+'</span></td></tr>').join(''):'<tr><td colspan="4">Nenhum registro encontrado.</td></tr>';
+}
+async function carregar(){if(!(await exigirAutenticacao()))return;const u=JSON.parse(localStorage.getItem('usuario')||'{}');if(u.perfil!=='PROFESSOR'){window.location.href='dashboard.html';return;}document.getElementById('saudacao').textContent='Olá, '+(u.nome||'Professor')+'!';
+ try{const r=await fetch('/api/professores/minha-presenca',{headers:cabecalhosAutenticados()});const d=await r.json();if(!r.ok)throw Error(d.erro||'Não foi possível carregar.');d.usuarioNome=u.nome;render(d);}catch(e){aviso(e.message,false)}}
+async function acao(url){const b=event?.currentTarget;if(b)b.disabled=true;try{const r=await fetch(url,{method:'POST',headers:cabecalhosAutenticados()});const d=await r.json();if(!r.ok)throw Error(d.erro||'Operação não realizada.');aviso(d.mensagem,true);await carregar();}catch(e){aviso(e.message,false);await carregar();}}
+function registrarEntrada(){acao('/api/professores/entrada')}
+function registrarSaida(){acao('/api/professores/saida')}
+carregar();
+</script>
+</body>
+</html>

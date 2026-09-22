@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Sistema de Presença</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f5f8ff;
+            color: #17213a;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           MENU LATERAL
+        ========================= */
+
+        .sidebar {
+            width: 255px;
+            background: #ffffff;
+            border-right: 1px solid #e3e9f5;
+            padding: 25px 18px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 10px 30px;
+        }
+
+        .logo-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 12px;
+            background: #2864e8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 8px 20px rgba(40, 100, 232, 0.25);
+        }
+
+        .logo-text strong {
+            display: block;
+            font-size: 16px;
+            color: #17213a;
+        }
+
+        .logo-text span {
+            font-size: 11px;
+            color: #71809d;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            color: #94a0b8;
+            font-weight: bold;
+            padding: 0 12px;
+            margin: 12px 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #64718d;
+            padding: 13px 14px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .menu a:hover {
+            background: #f0f5ff;
+            color: #2864e8;
+        }
+
+        .menu a.active {
+            background: #2864e8;
+            color: white;
+            box-shadow: 0 8px 18px rgba(40, 100, 232, 0.2);
+        }
+
+        .menu-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            bottom: 20px;
+        }
+
+        .school-status {
+            background: #f1faf5;
+            border: 1px solid #d6f2df;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #168445;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #21c36b;
+            border-radius: 50%;
+        }
+
+        /* =========================
+           CONTEÚDO
+        ========================= */
+
+        .main {
+            margin-left: 255px;
+            width: calc(100% - 255px);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid #e4e9f3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            color: #17213a;
+        }
+
+        .page-title p {
+            font-size: 12px;
+            color: #8390a9;
+            margin-top: 4px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .clock {
+            font-size: 13px;
+            color: #697792;
+        }
+
+        .notification {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e4e9f3;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            background: white;
+        }
+
+        .notification:hover {
+            background: #f5f8ff;
+        }
+
+        .notification-badge {
+            position: absolute;
+            right: 5px;
+            top: 4px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            background: #eaf1ff;
+            color: #2864e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .user-info span {
+            font-size: 11px;
+            color: #8792a9;
+        }
+
+        /* =========================
+           CONTEÚDO DASHBOARD
+        ========================= */
+
+        .content {
+            padding: 32px 35px;
+        }
+
+        .welcome {
+            margin-bottom: 28px;
+        }
+
+        .welcome h2 {
+            font-size: 25px;
+            margin-bottom: 7px;
+        }
+
+        .welcome p {
+            color: #71809d;
+            font-size: 14px;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e4e9f3;
+            border-radius: 14px;
+            padding: 21px;
+            box-shadow: 0 5px 20px rgba(40, 64, 100, 0.04);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: #edf3ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .card-label {
+            font-size: 12px;
+            color: #7d89a2;
+        }
+
+        .card-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 5px;
+            color: #17213a;
+        }
+
+        .card-description {
+            margin-top: 7px;
+            font-size: 11px;
+            color: #8b96aa;
+        }
+
+        .card.alert .card-icon {
+            background: #fff4e8;
+        }
+
+        .card.danger .card-icon {
+            background: #fff0f0;
+        }
+
+        .card.success .card-icon {
+            background: #eafaf1;
+        }
+
+        /* =========================
+           GRID PRINCIPAL
+        ========================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 22px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e4e9f3;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid #edf0f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h3 {
+            font-size: 15px;
+        }
+
+        .panel-header a {
+            font-size: 12px;
+            color: #2864e8;
+            text-decoration: none;
+        }
+
+        /* =========================
+           TABELA
+        ========================= */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 11px;
+            color: #8a95aa;
+            font-weight: normal;
+            padding: 14px 20px;
+            background: #fafbfe;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-top: 1px solid #f0f2f6;
+            font-size: 12px;
+        }
+
+        .student {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .student-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #edf3ff;
+            color: #2864e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .student-name strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .student-name span {
+            font-size: 10px;
+            color: #919bae;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .badge.entry {
+            background: #eafaf1;
+            color: #168445;
+        }
+
+        .badge.exit {
+            background: #edf3ff;
+            color: #2864e8;
+        }
+
+        /* =========================
+           ALERTAS
+        ========================= */
+
+        .alerts {
+            padding: 10px 20px 20px;
+        }
+
+        .alert-item {
+            padding: 14px;
+            border-bottom: 1px solid #edf0f5;
+            display: flex;
+            gap: 12px;
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 9px;
+            background: #fff3df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .alert-item.danger .alert-icon {
+            background: #fff0f0;
+        }
+
+        .alert-content strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .alert-content p {
+            font-size: 11px;
+            color: #818ca2;
+            line-height: 1.4;
+        }
+
+        .alert-time {
+            font-size: 10px;
+            color: #a0a8b8;
+            margin-top: 5px;
+        }
+
+        /* =========================
+           AÇÕES RÁPIDAS
+        ========================= */
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .quick-action {
+            border: 1px solid #e4e9f3;
+            border-radius: 10px;
+            padding: 15px;
+            text-decoration: none;
+            color: #17213a;
+            transition: 0.2s;
+        }
+
+        .quick-action:hover {
+            border-color: #2864e8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 100, 232, 0.08);
+        }
+
+        .quick-action-icon {
+            font-size: 20px;
+            margin-bottom: 9px;
+        }
+
+        .quick-action strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .quick-action span {
+            display: block;
+            font-size: 10px;
+            color: #8792a9;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           RESPONSIVO
+        ========================= */
+
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .logo-text,
+            .menu-title,
+            .menu a span:not(.menu-icon),
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .logo {
+                justify-content: center;
+                padding-bottom: 25px;
+            }
+
+            .menu a {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .user-info,
+            .clock {
+                display: none;
+            }
+
+            .content {
+                padding: 25px 18px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- =========================
+         MENU LATERAL
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">✓</div>
+
+            <div class="logo-text">
+                <strong>Controle Escolar</strong>
+                <span>Sistema de Presença</span>
+            </div>
+        </div>
+
+        <div class="menu-title">Principal</div>
+
+        <nav class="menu">
+
+            <a href="dashboard.html" class="active">
+                <span class="menu-icon">🏠</span>
+                <span>Início</span>
+            </a>
+
+            <a href="alunos.html">
+                <span class="menu-icon">👨‍🎓</span>
+                <span>Alunos</span>
+            </a>
+
+            <a href="turmas.html">
+                <span class="menu-icon">🏫</span>
+                <span>Turmas</span>
+            </a>
+
+            <a href="presenca.html">
+                <span class="menu-icon">📱</span>
+                <span>Registrar presença</span>
+            </a>
+
+            <div class="menu-title">Controle</div>
+
+            <a href="ocorrencias.html">
+                <span class="menu-icon">⚠️</span>
+                <span>Ocorrências</span>
+            </a>
+
+            <a href="relatorios.html">
+                <span class="menu-icon">📊</span>
+                <span>Relatórios</span>
+            </a>
+
+            <a href="relatorios.html">
+                <span class="menu-icon">📋</span>
+                <span>Histórico</span>
+            </a>
+
+            <div class="menu-title">Administração</div>
+
+            <a href="professores.html">
+                <span class="menu-icon">👨‍🏫</span>
+                <span>Professores</span>
+            </a>
+
+            <a href="#">
+                <span class="menu-icon">🔐</span>
+                <span>Permissões</span>
+            </a>
+
+            <a href="#">
+                <span class="menu-icon">⚙️</span>
+                <span>Configurações</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="school-status">
+                <span class="status-dot"></span>
+                Sistema online
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         CONTEÚDO
+    ========================== -->
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="page-title">
+                <h1>Dashboard</h1>
+                <p>Painel de controle da escola</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="clock" id="clock">
+                    Carregando...
+                </div>
+
+                <div class="notification" title="Notificações">
+                    🔔
+                    <span class="notification-badge"></span>
+                </div>
+
+                <div class="user">
+
+                    <div class="user-avatar">
+                        C
+                    </div>
+
+                    <div class="user-info">
+                        <strong>Coordenação</strong>
+                        <span>Administrador</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+                
+
+            <!-- AVISO DO SISTEMA -->
+<div id="systemAlert" class="system-alert">
+
+    <div class="system-alert-icon" id="systemAlertIcon">
+        ✓
+    </div>
+
+    <div class="system-alert-content">
+        <strong id="systemAlertTitle">
+            Operação realizada
+        </strong>
+
+        <p id="systemAlertMessage">
+            A operação foi realizada com sucesso.
+        </p>
+    </div>
+
+    <button onclick="fecharAviso()" class="system-alert-close">
+        ×
+    </button>
+
+</div>
+
+            <div class="welcome">
+
+                <h2>Olá, Coordenação! 👋</h2>
+
+                <p>
+                    Aqui está um resumo da presença dos alunos hoje.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 CARDS
+            ========================== -->
+
+            <div class="cards">
+
+                <div class="card">
+
+                    <div class="card-top">
+                        <div class="card-icon">👨‍🎓</div>
+                        <span class="card-label">Alunos</span>
+                    </div>
+
+                    <div class="card-number" id="totalAlunos">
+                        0
+                    </div>
+
+                    <div class="card-description">
+                        Total de alunos cadastrados
+                    </div>
+
+                </div>
+
+
+                <div class="card success">
+
+                    <div class="card-top">
+                        <div class="card-icon">✓</div>
+                        <span class="card-label">Presentes</span>
+                    </div>
+
+                    <div class="card-number" id="presentes">
+                        0
+                    </div>
+
+                    <div class="card-description">
+                        Alunos presentes hoje
+                    </div>
+
+                </div>
+
+
+                <div class="card danger">
+
+                    <div class="card-top">
+                        <div class="card-icon">!</div>
+                        <span class="card-label">Sem saída</span>
+                    </div>
+
+                    <div class="card-number" id="semSaida">
+                        0
+                    </div>
+
+                    <div class="card-description">
+                        Entraram e ainda não saíram
+                    </div>
+
+                </div>
+
+
+                <div class="card alert">
+
+                    <div class="card-top">
+                        <div class="card-icon">⚠️</div>
+                        <span class="card-label">Ocorrências</span>
+                    </div>
+
+                    <div class="card-number" id="ocorrencias">
+                        0
+                    </div>
+
+                    <div class="card-description">
+                        Ocorrências pendentes
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 ÁREA PRINCIPAL
+            ========================== -->
+
+            <div class="dashboard-grid">
+
+
+                <!-- REGISTROS -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3>Últimos registros</h3>
+
+                        <a href="#">
+                            Ver todos →
+                        </a>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Tipo</th>
+                                    <th>Horário</th>
+                                    <th>Turma</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="registros">
+
+                                <tr>
+                                    <td>
+                                        <div class="student">
+
+                                            <div class="student-avatar">
+                                                --
+                                            </div>
+
+                                            <div class="student-name">
+                                                <strong>Nenhum registro</strong>
+                                                <span>Aguardando dados</span>
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                    <td>—</td>
+
+                                    <td>—</td>
+
+                                    <td>
+                                        <span class="badge entry">
+                                            Sistema online
+                                        </span>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ALERTAS -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3>⚠️ Alertas</h3>
+
+                        <a href="#">
+                            Ver todos →
+                        </a>
+
+                    </div>
+
+
+                    <div class="alerts">
+
+                        <div class="alert-item">
+
+                            <div class="alert-icon">
+                                🔔
+                            </div>
+
+                            <div class="alert-content">
+
+                                <strong>
+                                    Sistema pronto
+                                </strong>
+
+                                <p>
+                                    O sistema está aguardando os
+                                    registros de entrada e saída.
+                                </p>
+
+                                <div class="alert-time">
+                                    Agora
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="alert-item danger">
+
+                            <div class="alert-icon">
+                                ⚠️
+                            </div>
+
+                            <div class="alert-content">
+
+                                <strong>
+                                    Controle de saída
+                                </strong>
+
+                                <p>
+                                    Alunos sem registro de saída
+                                    aparecerão nesta área.
+                                </p>
+
+                                <div class="alert-time">
+                                    Monitoramento ativo
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 AÇÕES RÁPIDAS
+            ========================== -->
+
+            <div class="panel" style="margin-top: 22px;">
+
+                <div class="panel-header">
+
+                    <h3>Ações rápidas</h3>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+                    <a href="presenca.html" class="quick-action">
+                        <div class="quick-action-icon">
+                            📱
+                        </div>
+
+                        <strong>
+                            Registrar presença
+                        </strong>
+
+                        <span>
+                            Ler QR Code
+                        </span>
+                    </a>
+                        <a href="alunos.html" class="quick-action">
+
+                            <div class="quick-action-icon">
+                                👨‍🎓
+                            </div>
+                        
+                            <strong>
+                                Cadastrar aluno
+                            </strong>
+                        
+                            <span>
+                                Adicionar novo aluno
+                            </span>
+                        
+                        </a>
+
+
+                    <a href="#" class="quick-action">
+
+                        <div class="quick-action-icon">
+                            📊
+                        </div>
+
+                        <strong>
+                            Relatórios
+                        </strong>
+
+                        <span>
+                            Consultar presença
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="js/auth.js"></script>
+<script>
+    function mostrarAviso(titulo, mensagem, tipo = "sucesso") {
+
+const alerta = document.getElementById("systemAlert");
+const icone = document.getElementById("systemAlertIcon");
+const tituloElemento = document.getElementById("systemAlertTitle");
+const mensagemElemento = document.getElementById("systemAlertMessage");
+
+tituloElemento.textContent = titulo;
+mensagemElemento.textContent = mensagem;
+
+if (tipo === "sucesso") {
+    alerta.style.borderLeftColor = "#21c36b";
+    icone.style.background = "#eafaf1";
+    icone.style.color = "#168445";
+    icone.textContent = "✓";
+
+} else if (tipo === "aviso") {
+    alerta.style.borderLeftColor = "#f59e0b";
+    icone.style.background = "#fff4df";
+    icone.style.color = "#b86b00";
+    icone.textContent = "!";
+
+} else if (tipo === "erro") {
+    alerta.style.borderLeftColor = "#ef4444";
+    icone.style.background = "#fff0f0";
+    icone.style.color = "#dc2626";
+    icone.textContent = "×";
+}
+
+alerta.classList.add("show");
+
+setTimeout(() => {
+    fecharAviso();
+}, 5000);
+}
+
+
+function fecharAviso() {
+
+const alerta = document.getElementById("systemAlert");
+
+alerta.classList.remove("show");
+}
+    /* =========================
+       RELÓGIO
+    ========================== */
+
+    function atualizarRelogio() {
+
+        const agora = new Date();
+
+        const hora = agora.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+
+        const data = agora.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+
+        document.getElementById("clock").textContent =
+            data + " • " + hora;
+    }
+
+    atualizarRelogio();
+
+    setInterval(atualizarRelogio, 1000);
+
+
+    /* =========================
+       TESTE INICIAL
+    ========================== */
+
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuario') || '{}');
+    if (usuarioLogado.perfil === 'PROFESSOR') {
+        window.location.replace('professor.html');
+        throw new Error('Redirecionando professor para painel próprio.');
+    }
+
+    // O sistema atual trabalha apenas com ADMIN e PROFESSOR.
+    // Não exibir nem criar o rótulo "Super Admin".
+    const usuarioNome = usuarioLogado.nome || 'Administrador';
+    document.querySelector('.user-info strong')?.replaceChildren(document.createTextNode(usuarioNome));
+    document.querySelector('.user-info span')?.replaceChildren(document.createTextNode('Administrador'));
+    document.querySelector('.welcome h2')?.replaceChildren(document.createTextNode('Olá, ' + usuarioNome + '! 👋'));
+
+    console.log("Dashboard carregado com sucesso.");
+    async function carregarResumoAlunos() {
+
+try {
+
+    const resposta = await fetch('/api/presencas/resumo', { headers: cabecalhosAutenticados() });
+
+    if (!resposta.ok) {
+        throw new Error('Erro ao buscar alunos.');
+    }
+
+    const resumo = await resposta.json();
+
+    document.getElementById('totalAlunos').textContent =
+        resumo.total_alunos;
+    document.getElementById('presentes').textContent = resumo.presentes;
+    document.getElementById('semSaida').textContent = resumo.sem_saida;
+    document.getElementById('ocorrencias').textContent = resumo.ocorrencias;
+
+    console.log('Resumo carregado:', resumo);
+
+} catch (erro) {
+
+    console.error(
+        'Erro ao carregar total de alunos:',
+        erro
+    );
+
+    document.getElementById('totalAlunos').textContent = '—';
+}
+}
+
+
+async function carregarRegistrosRecentes() {
+    try {
+        const resposta = await fetch('/api/presencas/recentes?limite=10', {
+            headers: cabecalhosAutenticados()
+        });
+        const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.erro || 'Erro ao buscar registros.');
+
+        const tabela = document.getElementById('registros');
+        if (!dados.length) {
+            tabela.innerHTML = '<tr><td colspan="4">Nenhum registro hoje.</td></tr>';
+            return;
+        }
+
+        tabela.innerHTML = dados.map(item => {
+            const inicial = (item.nome || '?').charAt(0).toUpperCase();
+            const hora = new Date(item.registrado_em).toLocaleTimeString('pt-BR', {
+                hour: '2-digit', minute: '2-digit'
+            });
+            const classe = item.tipo === 'ENTRADA' ? 'entry' : 'exit';
+            const status = item.tipo === 'ENTRADA' ? 'Entrada' : 'Saída';
+            return `
+                <tr>
+                    <td>
+                        <div class="student">
+                            <div class="student-avatar">${inicial}</div>
+                            <div class="student-name">
+                                <strong>${escaparHtmlDashboard(item.nome)}</strong>
+                                <span>${escaparHtmlDashboard(item.matricula)}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge ${classe}">${status}</span></td>
+                    <td>${hora}</td>
+                    <td>${escaparHtmlDashboard(item.turma_nome)}</td>
+                </tr>`;
+        }).join('');
+    } catch (erro) {
+        console.error('Erro ao carregar registros:', erro);
+    }
+}
+
+function escaparHtmlDashboard(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    }[c]));
+}
+
+async function iniciarDashboard() {
+    if (await exigirAutenticacao()) { carregarResumoAlunos(); carregarRegistrosRecentes(); setInterval(carregarRegistrosRecentes, 15000); }
+}
+
+iniciarDashboard();
+
+</script>
+
+</body>
+</html>

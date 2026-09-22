@@ -1,0 +1,129 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+.login-container {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+
+    background: white;
+
+    padding: 45px;
+
+    border-radius: 20px;
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+
+    text-align: center;
+}
+
+.logo {
+    font-size: 55px;
+    margin-bottom: 15px;
+}
+
+.login-card h1 {
+    font-size: 27px;
+}
+
+.subtitulo {
+    margin-top: 10px;
+    margin-bottom: 30px;
+
+    color: #667085;
+}
+
+form {
+    text-align: left;
+}
+
+label {
+    display: block;
+
+    margin-bottom: 7px;
+    margin-top: 18px;
+
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+
+    padding: 14px;
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+input:focus {
+    border-color: #2563eb;
+}
+
+button {
+    width: 100%;
+
+    margin-top: 28px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.voltar {
+    display: inline-block;
+
+    margin-top: 25px;
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-size: 14px;
+}
+
+#erroLogin {
+    min-height: 20px;
+    margin-top: 14px;
+    color: #c62828;
+    font-size: 13px;
+}

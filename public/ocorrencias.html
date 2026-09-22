@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ocorrências | Controle Escolar</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}body{margin:0;background:#f5f8ff;color:#17213a}.top{height:75px;background:#fff;border-bottom:1px solid #e4e9f3;display:flex;justify-content:space-between;align-items:center;padding:0 35px}.top h1{font-size:22px;margin:0}.top p{font-size:12px;color:#7c88a0;margin:5px 0 0}.back,.btn{background:#2864e8;color:#fff;text-decoration:none;border:0;border-radius:9px;padding:10px 15px;cursor:pointer;font-weight:bold}.content{max-width:1100px;margin:auto;padding:30px 35px}.grid{display:grid;grid-template-columns:1fr 1.7fr;gap:20px}.card,.panel{background:#fff;border:1px solid #e4e9f3;border-radius:14px;padding:20px}.field{margin-bottom:13px}.field label{display:block;font-size:11px;font-weight:bold;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #dce3ef;border-radius:8px;resize:vertical}.btn{width:100%;margin-top:4px}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px 8px;border-bottom:1px solid #edf0f5;font-size:11px;text-align:left}.status{border:0;border-radius:20px;padding:5px 8px;font-size:10px;font-weight:bold;cursor:pointer}.pend{background:#fff4e8;color:#b86b00}.analise{background:#edf3ff;color:#2864e8}.res{background:#eafaf1;color:#168445}.alert{padding:12px;border-radius:9px;margin-bottom:15px;font-size:12px;display:none}.alert.show{display:block}.ok{background:#eafaf1;color:#168445}.err{background:#fff0f0;color:#c62828}@media(max-width:850px){.grid{grid-template-columns:1fr}.content{padding:20px 15px}.top{padding:0 18px}}
+</style>
+</head>
+<body>
+<header class="top"><div><h1>⚠️ Ocorrências</h1><p>Registre e acompanhe situações dos alunos</p></div><a class="back" href="dashboard.html">← Dashboard</a></header>
+<main class="content"><div id="alert" class="alert"></div><div class="grid">
+<section class="card"><h2 style="font-size:17px;margin-top:0">Nova ocorrência</h2>
+<form id="form">
+<div class="field"><label>Aluno *</label><select id="aluno" required><option value="">Carregando...</option></select></div>
+<div class="field"><label>Tipo *</label><select id="tipo" required><option value="SEM_SAIDA">Sem saída</option><option value="SAIDA_ANTECIPADA">Saída antecipada</option></select></div>
+<div class="field"><label>Descrição</label><textarea id="descricao" rows="4" placeholder="Descreva a ocorrência"></textarea></div>
+<button class="btn">Registrar ocorrência</button>
+</form></section>
+<section class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><strong>Ocorrências</strong><select id="filtro" style="padding:8px;border:1px solid #dce3ef;border-radius:7px"><option value="">Todas</option><option>PENDENTE</option><option>EM_ANALISE</option><option>RESOLVIDA</option></select></div>
+<div style="overflow:auto"><table class="table"><thead><tr><th>Aluno</th><th>Tipo</th><th>Descrição</th><th>Status</th><th>Data</th></tr></thead><tbody id="lista"></tbody></table></div></section>
+</div></main>
+<script src="js/auth.js"></script>
+<script>
+const lista=document.getElementById('lista'), box=document.getElementById('alert');
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+function aviso(m,ok=true){box.className='alert show '+(ok?'ok':'err');box.textContent=m;setTimeout(()=>box.classList.remove('show'),4000)}
+async function init(){
+ if(!(await exigirAutenticacao()))return;
+ try{
+  const r=await fetch('/api/alunos',{headers:cabecalhosAutenticados()}),a=await r.json();
+  if(r.ok)document.getElementById('aluno').innerHTML='<option value="">Selecione</option>'+a.filter(x=>Number(x.ativo)===1).map(x=>`<option value="${x.id}">${esc(x.nome)} — ${esc(x.matricula)}</option>`).join('');
+  carregar();
+ }catch(e){aviso('❌ Não foi possível carregar os dados.',false)}
+}
+async function carregar(){
+ const status=document.getElementById('filtro').value, url='/api/ocorrencias'+(status?'?status='+encodeURIComponent(status):'');
+ const r=await fetch(url,{headers:cabecalhosAutenticados()}),d=await r.json(); if(!r.ok)return;
+ lista.innerHTML=d.length?d.map(o=>`<tr><td>${esc(o.nome)}<br><small>${esc(o.turma_nome)}</small></td><td>${o.tipo==='SEM_SAIDA'?'Sem saída':'Saída antecipada'}</td><td>${esc(o.descricao||'—')}</td><td><button class="status ${o.status==='PENDENTE'?'pend':o.status==='EM_ANALISE'?'analise':'res'}" onclick="mudarStatus(${o.id},'${o.status}')">${o.status}</button></td><td>${new Date(o.criado_em).toLocaleString('pt-BR')}</td></tr>`).join(''):'<tr><td colspan="5">Nenhuma ocorrência.</td></tr>';
+}
+async function mudarStatus(id,status){const proximo=status==='PENDENTE'?'EM_ANALISE':status==='EM_ANALISE'?'RESOLVIDA':'PENDENTE';const r=await fetch('/api/ocorrencias/'+id+'/status',{method:'PATCH',headers:{'Content-Type':'application/json',...cabecalhosAutenticados()},body:JSON.stringify({status:proximo})});const d=await r.json();if(!r.ok){aviso('❌ '+(d.erro||'Erro'),false);return}aviso('✅ Status atualizado.');carregar()}
+document.getElementById('filtro').onchange=carregar;
+document.getElementById('form').onsubmit=async e=>{e.preventDefault();const r=await fetch('/api/ocorrencias',{method:'POST',headers:{'Content-Type':'application/json',...cabecalhosAutenticados()},body:JSON.stringify({aluno_id:Number(document.getElementById('aluno').value),tipo:document.getElementById('tipo').value,descricao:document.getElementById('descricao').value})});const d=await r.json();if(!r.ok){aviso('❌ '+(d.erro||'Erro'),false);return}e.target.reset();aviso('✅ Ocorrência registrada.');carregar()};
+init();
+</script>
+</body></html>

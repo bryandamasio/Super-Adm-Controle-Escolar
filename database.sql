@@ -1,0 +1,87 @@
+CREATE DATABASE IF NOT EXISTS sistema_presenca
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE sistema_presenca;
+
+CREATE TABLE IF NOT EXISTS turmas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50) NOT NULL,
+  ano VARCHAR(20) NOT NULL,
+  ativo BOOLEAN DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS alunos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  matricula VARCHAR(50) NOT NULL UNIQUE,
+  turma_id INT NOT NULL,
+  email VARCHAR(150) NULL,
+  whatsapp VARCHAR(30) NULL,
+  codigo_qr VARCHAR(100) NOT NULL UNIQUE,
+  ativo BOOLEAN DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_aluno_turma FOREIGN KEY (turma_id) REFERENCES turmas(id)
+);
+
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL,
+  tipo ENUM('ADMIN', 'PROFESSOR') NOT NULL,
+  ativo BOOLEAN DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS registros (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  aluno_id INT NOT NULL,
+  tipo ENUM('ENTRADA', 'SAIDA') NOT NULL,
+  data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  dispositivo VARCHAR(100) NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_registro_aluno FOREIGN KEY (aluno_id) REFERENCES alunos(id),
+  KEY idx_registro_aluno_data (aluno_id, data_hora)
+);
+
+CREATE TABLE IF NOT EXISTS ocorrencias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  aluno_id INT NOT NULL,
+  tipo ENUM('SEM_SAIDA', 'SAIDA_ANTECIPADA') NOT NULL,
+  descricao TEXT NULL,
+  status ENUM('PENDENTE', 'EM_ANALISE', 'RESOLVIDA') NOT NULL DEFAULT 'PENDENTE',
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  resolvido_por INT NULL,
+  CONSTRAINT fk_ocorrencia_aluno FOREIGN KEY (aluno_id) REFERENCES alunos(id),
+  CONSTRAINT fk_ocorrencia_usuario FOREIGN KEY (resolvido_por) REFERENCES usuarios(id)
+);
+
+
+-- Estruturas adicionadas ao sistema atual para professores.
+CREATE TABLE IF NOT EXISTS professores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL UNIQUE,
+  telefone VARCHAR(30) NULL,
+  registro VARCHAR(50) NULL,
+  escola VARCHAR(150) NULL,
+  ativo BOOLEAN DEFAULT TRUE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_professor_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS professor_presencas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  professor_id INT NOT NULL,
+  data DATE NOT NULL,
+  entrada DATETIME NULL,
+  saida DATETIME NULL,
+  status ENUM('ABERTA','COMPLETA') NOT NULL DEFAULT 'ABERTA',
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_prof_pres_prof FOREIGN KEY (professor_id) REFERENCES professores(id)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  UNIQUE KEY uq_professor_data (professor_id, data),
+  KEY idx_professor_data (professor_id, data)
+);
