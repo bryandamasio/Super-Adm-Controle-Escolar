@@ -165,18 +165,24 @@ body.with-global-sidebar{
 }
 
 .global-menu-link{
-    display:flex;
+    display:flex !important;
     align-items:center;
     gap:13px;
     min-height:50px;
     margin:3px 0;
     padding:11px 13px;
     border-radius:12px;
-    color:#63738e;
+    background:transparent !important;
+    color:#63738e !important;
     text-decoration:none;
     font-size:14px;
     font-weight:600;
     transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+
+.global-menu-link:not(.active):hover{
+    background:#f2f6fd !important;
+    color:#2864e8 !important;
 }
 
 .global-menu-link .menu-icon{
@@ -194,14 +200,14 @@ body.with-global-sidebar{
 }
 
 .global-menu-link.active{
-    background:#2864e8;
-    color:#ffffff;
+    background:#2864e8 !important;
+    color:#ffffff !important;
     box-shadow:0 10px 22px rgba(40,100,232,.18);
 }
 
 .global-menu-link.active:hover{
-    background:#2864e8;
-    color:#ffffff;
+    background:#2864e8 !important;
+    color:#ffffff !important;
 }
 
 .global-menu .global-menu-title{

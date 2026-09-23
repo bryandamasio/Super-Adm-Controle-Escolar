@@ -23,7 +23,14 @@
 
     function itemHtml(item) {
         const current = window.location.pathname.split("/").pop().toLowerCase();
-        const active = item.files.includes(current) ? " active" : "";
+
+        // Apenas a página inicial mantém o destaque azul.
+        // Nas páginas internas o menu permanece neutro.
+        const active =
+            item.href === "dashboard.html" &&
+            current === "dashboard.html"
+                ? " active"
+                : "";
         return '<a href="' + base + item.href + '" class="global-menu-link' + active + '">' +
             '<span class="menu-icon">' + item.icon + '</span>' +
             '<span>' + item.label + '</span>' +
