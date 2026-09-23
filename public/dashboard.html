@@ -208,6 +208,8 @@
         .clock {
             font-size: 13px;
             color: #697792;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .notification {
@@ -241,6 +243,8 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
+            min-width: 0;
         }
 
         .user-avatar {
@@ -255,14 +259,26 @@
             font-weight: bold;
         }
 
+        .user-info {
+            min-width: 125px;
+            max-width: 180px;
+        }
+
         .user-info strong {
             display: block;
             font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-info span {
+            display: block;
             font-size: 11px;
             color: #8792a9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* =========================
@@ -733,7 +749,6 @@
                     Carregando...
                 </div>
 
-                <div class="notification" title="Notificações">
                 <div class="notification" title="Notifica&#xE7;&#xF5;es">
                     <span class="notification-badge"></span>
                 </div>
@@ -853,9 +868,7 @@
             </div>
 
 
-                  &#xC1;REA PRINCIPAL
-                 ÁREA PRINCIPAL
-            ========================== -->
+             
 
             <div class="dashboard-grid">
 
@@ -1142,7 +1155,7 @@ alerta.classList.remove("show");
         });
 
         document.getElementById("clock").textContent =
-            data + " â€¢ " + hora;
+            data + " \u2022 " + hora;
     }
 
     atualizarRelogio();
