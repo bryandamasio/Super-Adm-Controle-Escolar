@@ -44,4 +44,5 @@ document.getElementById('filtro').onchange=carregar;
 document.getElementById('form').onsubmit=async e=>{e.preventDefault();const r=await fetch('/api/ocorrencias',{method:'POST',headers:{'Content-Type':'application/json',...cabecalhosAutenticados()},body:JSON.stringify({aluno_id:Number(document.getElementById('aluno').value),tipo:document.getElementById('tipo').value,descricao:document.getElementById('descricao').value})});const d=await r.json();if(!r.ok){aviso('❌ '+(d.erro||'Erro'),false);return}e.target.reset();aviso('✅ Ocorrência registrada.');carregar()};
 init();
 </script>
+<script src="js/global-sidebar.js"></script>
 </body></html>

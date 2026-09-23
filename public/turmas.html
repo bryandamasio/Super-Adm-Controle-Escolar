@@ -36,5 +36,6 @@ async function carregar(){if(!(await exigirAutenticacao()))return;try{const r=aw
 document.getElementById('formTurma').addEventListener('submit',async e=>{e.preventDefault();try{const r=await fetch('/api/turmas',{method:'POST',headers:{'Content-Type':'application/json',...cabecalhosAutenticados()},body:JSON.stringify({nome:document.getElementById('nome').value,ano:document.getElementById('ano').value})});const d=await r.json();if(!r.ok)throw Error(d.erro||'Erro');e.target.reset();aviso('✅ Turma cadastrada com sucesso.');carregar()}catch(err){aviso('❌ '+err.message,false)}})
 carregar();
 </script>
+<script src="js/global-sidebar.js"></script>
 </body>
 </html>

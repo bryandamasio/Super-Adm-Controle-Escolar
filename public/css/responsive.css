@@ -1,4 +1,5 @@
 /* RESPONSIVIDADE GLOBAL - SISTEMA DE PRESENÇA */
+
 html{width:100%;min-width:0;scroll-behavior:smooth}
 body{width:100%;min-width:0;max-width:100%;overflow-x:hidden}
 *,*:before,*:after{box-sizing:border-box}
@@ -17,7 +18,7 @@ table{max-width:none}
 .grid>* ,.cards>*,.dashboard-grid>*,.quick-actions>*{min-width:0}
 .student-name,.card-description,.alert-content,.quick-action strong,.quick-action span,.user-info strong,.user-info span{overflow-wrap:anywhere}
 
-/* DASHBOARD: sidebar permanece fixa */
+/* DASHBOARD ORIGINAL */
 .sidebar{z-index:1000;max-width:100vw}
 .main{min-width:0}
 @media (max-width:1100px){
@@ -77,4 +78,230 @@ table{max-width:none}
 @media (pointer:coarse){
   a,button,select,input[type=checkbox],input[type=radio]{min-height:42px}
   input,select,textarea{font-size:16px!important}
+}
+
+/* =========================================================
+   MENU LATERAL GLOBAL FIXO
+   Em páginas internas, o menu permanece fixo enquanto o conteúdo
+   da página rola e é navegado.
+========================================================= */
+
+body.with-global-sidebar{
+    padding-left:270px;
+    min-width:0;
+}
+
+.global-sidebar{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:270px;
+    z-index:2000;
+    display:flex;
+    flex-direction:column;
+    background:#ffffff;
+    border-right:1px solid #e6ebf3;
+    box-shadow:8px 0 28px rgba(22,35,61,.05);
+    overflow:hidden;
+}
+
+.global-brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-height:118px;
+    padding:20px;
+    flex-shrink:0;
+}
+
+.global-brand img{
+    width:78px;
+    height:78px;
+    object-fit:contain;
+    display:block;
+    flex-shrink:0;
+}
+
+.global-brand-text{
+    min-width:0;
+}
+
+.global-brand-text strong{
+    display:block;
+    font-size:20px;
+    line-height:1.15;
+    color:#17213a;
+    font-weight:800;
+    overflow-wrap:anywhere;
+}
+
+.global-brand-text span{
+    display:block;
+    margin-top:4px;
+    color:#71809a;
+    font-size:12px;
+    line-height:1.3;
+}
+
+.global-menu-title{
+    flex-shrink:0;
+    padding:12px 22px 8px;
+    color:#8793aa;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+}
+
+.global-menu{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:0 12px 12px;
+    scrollbar-width:thin;
+    scrollbar-color:#cbd4e2 transparent;
+}
+
+.global-menu-link{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    min-height:50px;
+    margin:3px 0;
+    padding:11px 13px;
+    border-radius:12px;
+    color:#63738e;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+
+.global-menu-link .menu-icon{
+    width:27px;
+    min-width:27px;
+    text-align:center;
+    font-size:19px;
+    line-height:1;
+}
+
+.global-menu-link:hover{
+    background:#f2f6fd;
+    color:#2864e8;
+    transform:translateX(1px);
+}
+
+.global-menu-link.active{
+    background:#2864e8;
+    color:#ffffff;
+    box-shadow:0 10px 22px rgba(40,100,232,.18);
+}
+
+.global-menu-link.active:hover{
+    background:#2864e8;
+    color:#ffffff;
+}
+
+.global-menu .global-menu-title{
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.global-sidebar-bottom{
+    flex-shrink:0;
+    padding:12px;
+    background:#ffffff;
+    border-top:1px solid #edf1f6;
+}
+
+.global-school-status{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-height:46px;
+    padding:10px 13px;
+    border:1px solid #cfeedd;
+    background:#f1fbf6;
+    color:#168445;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.global-status-dot{
+    width:9px;
+    height:9px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:#21c276;
+}
+
+@media (max-width:1100px){
+    body.with-global-sidebar{padding-left:220px}
+    .global-sidebar{width:220px}
+    .global-brand{
+        padding-left:15px;
+        padding-right:15px;
+        gap:10px
+    }
+    .global-brand img{
+        width:62px;
+        height:62px
+    }
+    .global-brand-text strong{font-size:17px}
+}
+
+@media (max-width:760px){
+    body.with-global-sidebar{padding-left:72px}
+    .global-sidebar{width:72px}
+    .global-brand{
+        justify-content:center;
+        padding:15px 7px 12px;
+        min-height:92px
+    }
+    .global-brand img{
+        width:52px;
+        height:52px
+    }
+    .global-brand-text,
+    .global-menu-title,
+    .global-menu-link>span:not(.menu-icon),
+    .global-school-status>span:not(.global-status-dot){
+        display:none
+    }
+    .global-menu{
+        padding-left:8px;
+        padding-right:8px
+    }
+    .global-menu-link{
+        justify-content:center;
+        padding:10px 8px;
+        min-height:48px
+    }
+    .global-menu-link .menu-icon{
+        width:auto;
+        min-width:0;
+        font-size:20px
+    }
+    .global-sidebar-bottom{padding:8px}
+    .global-school-status{
+        justify-content:center;
+        padding:10px 8px
+    }
+}
+
+@media (max-width:480px){
+    body.with-global-sidebar{padding-left:60px}
+    .global-sidebar{width:60px}
+    .global-brand img{
+        width:46px;
+        height:46px
+    }
+    .global-menu-link{
+        min-height:44px;
+        border-radius:10px
+    }
+    .global-menu-link .menu-icon{font-size:18px}
 }
