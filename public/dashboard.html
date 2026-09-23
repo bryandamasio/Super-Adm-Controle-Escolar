@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Dashboard | Sistema de Presença</title>
+    <title>Dashboard | Sistema de PresenÃ§a</title>
 
     <style>
         * {
@@ -30,14 +30,14 @@
 
         .sidebar {
             width: 255px;
+            height: 100vh;
             background: #ffffff;
             border-right: 1px solid #e3e9f5;
             padding: 25px 18px;
             position: fixed;
             left: 0;
             top: 0;
-            bottom: 0;
-            z-index: 10;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -169,7 +169,7 @@
         }
 
         /* =========================
-           CONTEÚDO
+           CONTEÃšDO
         ========================= */
 
         .main {
@@ -266,7 +266,7 @@
         }
 
         /* =========================
-           CONTEÚDO DASHBOARD
+           CONTEÃšDO DASHBOARD
         ========================= */
 
         .content {
@@ -517,7 +517,7 @@
         }
 
         /* =========================
-           AÇÕES RÁPIDAS
+           AÃ‡Ã•ES RÃPIDAS
         ========================= */
 
         .quick-actions {
@@ -635,11 +635,11 @@
     <aside class="sidebar">
 
         <div class="logo">
-            <div class="logo-icon">✓</div>
+            <div class="logo-icon">âœ“</div>
 
             <div class="logo-text">
                 <strong>Controle Escolar</strong>
-                <span>Sistema de Presença</span>
+                <span>Sistema de PresenÃ§a</span>
             </div>
         </div>
 
@@ -648,57 +648,57 @@
         <nav class="menu">
 
             <a href="dashboard.html" class="active">
-                <span class="menu-icon">🏠</span>
-                <span>Início</span>
+                <span class="menu-icon">ðŸ </span>
+                <span>InÃ­cio</span>
             </a>
 
             <a href="alunos.html">
-                <span class="menu-icon">👨‍🎓</span>
+                <span class="menu-icon">ðŸ‘¨â€ðŸŽ“</span>
                 <span>Alunos</span>
             </a>
 
+            <a href="professores.html">
+                <span class="menu-icon">ðŸ‘¨â€ðŸ«</span>
+                <span>Professores</span>
+            </a>
+
             <a href="turmas.html">
-                <span class="menu-icon">🏫</span>
+                <span class="menu-icon">ðŸ«</span>
                 <span>Turmas</span>
             </a>
 
             <a href="presenca.html">
-                <span class="menu-icon">📱</span>
-                <span>Registrar presença</span>
+                <span class="menu-icon">ðŸ“±</span>
+                <span>Registrar presenÃ§a</span>
             </a>
 
             <div class="menu-title">Controle</div>
 
             <a href="ocorrencias.html">
-                <span class="menu-icon">⚠️</span>
-                <span>Ocorrências</span>
+                <span class="menu-icon">âš ï¸</span>
+                <span>OcorrÃªncias</span>
             </a>
 
             <a href="relatorios.html">
-                <span class="menu-icon">📊</span>
-                <span>Relatórios</span>
+                <span class="menu-icon">ðŸ“Š</span>
+                <span>RelatÃ³rios</span>
             </a>
 
             <a href="relatorios.html">
-                <span class="menu-icon">📋</span>
-                <span>Histórico</span>
+                <span class="menu-icon">ðŸ“‹</span>
+                <span>HistÃ³rico</span>
             </a>
 
-            <div class="menu-title">Administração</div>
+            <div class="menu-title">AdministraÃ§Ã£o</div>
 
-            <a href="professores.html">
-                <span class="menu-icon">👨‍🏫</span>
-                <span>Professores</span>
+            <a href="#">
+                <span class="menu-icon">ðŸ”</span>
+                <span>PermissÃµes</span>
             </a>
 
             <a href="#">
-                <span class="menu-icon">🔐</span>
-                <span>Permissões</span>
-            </a>
-
-            <a href="#">
-                <span class="menu-icon">⚙️</span>
-                <span>Configurações</span>
+                <span class="menu-icon">âš™ï¸</span>
+                <span>ConfiguraÃ§Ãµes</span>
             </a>
 
         </nav>
@@ -714,7 +714,7 @@
 
 
     <!-- =========================
-         CONTEÚDO
+         CONTEÃšDO
     ========================== -->
 
     <main class="main">
@@ -732,8 +732,8 @@
                     Carregando...
                 </div>
 
-                <div class="notification" title="Notificações">
-                    🔔
+                <div class="notification" title="NotificaÃ§Ãµes">
+                    ðŸ””
                     <span class="notification-badge"></span>
                 </div>
 
@@ -744,7 +744,7 @@
                     </div>
 
                     <div class="user-info">
-                        <strong>Coordenação</strong>
+                        <strong>CoordenaÃ§Ã£o</strong>
                         <span>Administrador</span>
                     </div>
 
@@ -762,31 +762,31 @@
 <div id="systemAlert" class="system-alert">
 
     <div class="system-alert-icon" id="systemAlertIcon">
-        ✓
+        âœ“
     </div>
 
     <div class="system-alert-content">
         <strong id="systemAlertTitle">
-            Operação realizada
+            OperaÃ§Ã£o realizada
         </strong>
 
         <p id="systemAlertMessage">
-            A operação foi realizada com sucesso.
+            A operaÃ§Ã£o foi realizada com sucesso.
         </p>
     </div>
 
     <button onclick="fecharAviso()" class="system-alert-close">
-        ×
+        Ã—
     </button>
 
 </div>
 
             <div class="welcome">
 
-                <h2>Olá, Coordenação! 👋</h2>
+                <h2>OlÃ¡, CoordenaÃ§Ã£o! ðŸ‘‹</h2>
 
                 <p>
-                    Aqui está um resumo da presença dos alunos hoje.
+                    Aqui estÃ¡ um resumo da presenÃ§a dos alunos hoje.
                 </p>
 
             </div>
@@ -801,7 +801,7 @@
                 <div class="card">
 
                     <div class="card-top">
-                        <div class="card-icon">👨‍🎓</div>
+                        <div class="card-icon">ðŸ‘¨â€ðŸŽ“</div>
                         <span class="card-label">Alunos</span>
                     </div>
 
@@ -819,7 +819,7 @@
                 <div class="card success">
 
                     <div class="card-top">
-                        <div class="card-icon">✓</div>
+                        <div class="card-icon">âœ“</div>
                         <span class="card-label">Presentes</span>
                     </div>
 
@@ -838,7 +838,7 @@
 
                     <div class="card-top">
                         <div class="card-icon">!</div>
-                        <span class="card-label">Sem saída</span>
+                        <span class="card-label">Sem saÃ­da</span>
                     </div>
 
                     <div class="card-number" id="semSaida">
@@ -846,7 +846,7 @@
                     </div>
 
                     <div class="card-description">
-                        Entraram e ainda não saíram
+                        Entraram e ainda nÃ£o saÃ­ram
                     </div>
 
                 </div>
@@ -855,8 +855,8 @@
                 <div class="card alert">
 
                     <div class="card-top">
-                        <div class="card-icon">⚠️</div>
-                        <span class="card-label">Ocorrências</span>
+                        <div class="card-icon">âš ï¸</div>
+                        <span class="card-label">OcorrÃªncias</span>
                     </div>
 
                     <div class="card-number" id="ocorrencias">
@@ -864,7 +864,7 @@
                     </div>
 
                     <div class="card-description">
-                        Ocorrências pendentes
+                        OcorrÃªncias pendentes
                     </div>
 
                 </div>
@@ -873,7 +873,7 @@
 
 
             <!-- =========================
-                 ÁREA PRINCIPAL
+                 ÃREA PRINCIPAL
             ========================== -->
 
             <div class="dashboard-grid">
@@ -885,10 +885,10 @@
 
                     <div class="panel-header">
 
-                        <h3>Últimos registros</h3>
+                        <h3>Ãšltimos registros</h3>
 
                         <a href="#">
-                            Ver todos →
+                            Ver todos â†’
                         </a>
 
                     </div>
@@ -903,7 +903,7 @@
                                 <tr>
                                     <th>Aluno</th>
                                     <th>Tipo</th>
-                                    <th>Horário</th>
+                                    <th>HorÃ¡rio</th>
                                     <th>Turma</th>
                                 </tr>
 
@@ -927,9 +927,9 @@
                                         </div>
                                     </td>
 
-                                    <td>—</td>
+                                    <td>â€”</td>
 
-                                    <td>—</td>
+                                    <td>â€”</td>
 
                                     <td>
                                         <span class="badge entry">
@@ -954,10 +954,10 @@
 
                     <div class="panel-header">
 
-                        <h3>⚠️ Alertas</h3>
+                        <h3>âš ï¸ Alertas</h3>
 
                         <a href="#">
-                            Ver todos →
+                            Ver todos â†’
                         </a>
 
                     </div>
@@ -968,7 +968,7 @@
                         <div class="alert-item">
 
                             <div class="alert-icon">
-                                🔔
+                                ðŸ””
                             </div>
 
                             <div class="alert-content">
@@ -978,8 +978,8 @@
                                 </strong>
 
                                 <p>
-                                    O sistema está aguardando os
-                                    registros de entrada e saída.
+                                    O sistema estÃ¡ aguardando os
+                                    registros de entrada e saÃ­da.
                                 </p>
 
                                 <div class="alert-time">
@@ -994,18 +994,18 @@
                         <div class="alert-item danger">
 
                             <div class="alert-icon">
-                                ⚠️
+                                âš ï¸
                             </div>
 
                             <div class="alert-content">
 
                                 <strong>
-                                    Controle de saída
+                                    Controle de saÃ­da
                                 </strong>
 
                                 <p>
-                                    Alunos sem registro de saída
-                                    aparecerão nesta área.
+                                    Alunos sem registro de saÃ­da
+                                    aparecerÃ£o nesta Ã¡rea.
                                 </p>
 
                                 <div class="alert-time">
@@ -1024,14 +1024,14 @@
 
 
             <!-- =========================
-                 AÇÕES RÁPIDAS
+                 AÃ‡Ã•ES RÃPIDAS
             ========================== -->
 
             <div class="panel" style="margin-top: 22px;">
 
                 <div class="panel-header">
 
-                    <h3>Ações rápidas</h3>
+                    <h3>AÃ§Ãµes rÃ¡pidas</h3>
 
                 </div>
 
@@ -1040,11 +1040,11 @@
 
                     <a href="presenca.html" class="quick-action">
                         <div class="quick-action-icon">
-                            📱
+                            ðŸ“±
                         </div>
 
                         <strong>
-                            Registrar presença
+                            Registrar presenÃ§a
                         </strong>
 
                         <span>
@@ -1054,7 +1054,7 @@
                         <a href="alunos.html" class="quick-action">
 
                             <div class="quick-action-icon">
-                                👨‍🎓
+                                ðŸ‘¨â€ðŸŽ“
                             </div>
                         
                             <strong>
@@ -1071,15 +1071,15 @@
                     <a href="#" class="quick-action">
 
                         <div class="quick-action-icon">
-                            📊
+                            ðŸ“Š
                         </div>
 
                         <strong>
-                            Relatórios
+                            RelatÃ³rios
                         </strong>
 
                         <span>
-                            Consultar presença
+                            Consultar presenÃ§a
                         </span>
 
                     </a>
@@ -1111,7 +1111,7 @@ if (tipo === "sucesso") {
     alerta.style.borderLeftColor = "#21c36b";
     icone.style.background = "#eafaf1";
     icone.style.color = "#168445";
-    icone.textContent = "✓";
+    icone.textContent = "âœ“";
 
 } else if (tipo === "aviso") {
     alerta.style.borderLeftColor = "#f59e0b";
@@ -1123,7 +1123,7 @@ if (tipo === "sucesso") {
     alerta.style.borderLeftColor = "#ef4444";
     icone.style.background = "#fff0f0";
     icone.style.color = "#dc2626";
-    icone.textContent = "×";
+    icone.textContent = "Ã—";
 }
 
 alerta.classList.add("show");
@@ -1141,7 +1141,7 @@ const alerta = document.getElementById("systemAlert");
 alerta.classList.remove("show");
 }
     /* =========================
-       RELÓGIO
+       RELÃ“GIO
     ========================== */
 
     function atualizarRelogio() {
@@ -1161,7 +1161,7 @@ alerta.classList.remove("show");
         });
 
         document.getElementById("clock").textContent =
-            data + " • " + hora;
+            data + " â€¢ " + hora;
     }
 
     atualizarRelogio();
@@ -1176,15 +1176,15 @@ alerta.classList.remove("show");
     const usuarioLogado = JSON.parse(localStorage.getItem('usuario') || '{}');
     if (usuarioLogado.perfil === 'PROFESSOR') {
         window.location.replace('professor.html');
-        throw new Error('Redirecionando professor para painel próprio.');
+        throw new Error('Redirecionando professor para painel prÃ³prio.');
     }
 
     // O sistema atual trabalha apenas com ADMIN e PROFESSOR.
-    // Não exibir nem criar o rótulo "Super Admin".
+    // NÃ£o exibir nem criar o rÃ³tulo "Super Admin".
     const usuarioNome = usuarioLogado.nome || 'Administrador';
     document.querySelector('.user-info strong')?.replaceChildren(document.createTextNode(usuarioNome));
     document.querySelector('.user-info span')?.replaceChildren(document.createTextNode('Administrador'));
-    document.querySelector('.welcome h2')?.replaceChildren(document.createTextNode('Olá, ' + usuarioNome + '! 👋'));
+    document.querySelector('.welcome h2')?.replaceChildren(document.createTextNode('OlÃ¡, ' + usuarioNome + '! ðŸ‘‹'));
 
     console.log("Dashboard carregado com sucesso.");
     async function carregarResumoAlunos() {
@@ -1214,7 +1214,7 @@ try {
         erro
     );
 
-    document.getElementById('totalAlunos').textContent = '—';
+    document.getElementById('totalAlunos').textContent = 'â€”';
 }
 }
 
@@ -1239,7 +1239,7 @@ async function carregarRegistrosRecentes() {
                 hour: '2-digit', minute: '2-digit'
             });
             const classe = item.tipo === 'ENTRADA' ? 'entry' : 'exit';
-            const status = item.tipo === 'ENTRADA' ? 'Entrada' : 'Saída';
+            const status = item.tipo === 'ENTRADA' ? 'Entrada' : 'SaÃ­da';
             return `
                 <tr>
                     <td>
@@ -1277,3 +1277,4 @@ iniciarDashboard();
 
 </body>
 </html>
+
