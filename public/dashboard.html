@@ -212,41 +212,67 @@
         .topbar-right {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
+            margin-left: auto;
+            min-width: 0;
         }
 
         .clock {
-            font-size: 13px;
-            color: #697792;
+            min-width: 148px;
+            padding: 9px 13px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #53617a;
             white-space: nowrap;
             flex-shrink: 0;
+            text-align: center;
+            background: #f8faff;
+            border: 1px solid #e5ebf5;
+            border-radius: 10px;
         }
 
         .notification {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #e4e9f3;
-            border-radius: 10px;
+            width: 42px;
+            height: 42px;
+            border: 1px solid #e3e9f3;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             position: relative;
-            background: white;
+            background: #ffffff;
+            color: #596781;
+            box-shadow: 0 2px 8px rgba(23,33,58,.04);
+            transition: .2s ease;
+        }
+
+        .notification-icon {
+            font-size: 18px;
+            line-height: 1;
         }
 
         .notification:hover {
-            background: #f5f8ff;
+            background: #f7faff;
+            border-color: #cad7ed;
+            color: #2864e8;
+            transform: translateY(-1px);
         }
 
         .notification-badge {
             position: absolute;
-            right: 5px;
+            right: 4px;
             top: 4px;
-            width: 8px;
-            height: 8px;
+            width: 9px;
+            height: 9px;
             background: #ef4444;
+            border: 2px solid #ffffff;
             border-radius: 50%;
+        }
+
+        .notification:focus-visible {
+            outline: 3px solid rgba(40,100,232,.16);
+            outline-offset: 2px;
         }
 
         .user {
@@ -255,23 +281,28 @@
             gap: 10px;
             flex-shrink: 0;
             min-width: 0;
+            padding-left: 8px;
+            border-left: 1px solid #e7ecf4;
         }
 
         .user-avatar {
-            width: 39px;
-            height: 39px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            background: #eaf1ff;
+            background: linear-gradient(135deg, #edf3ff, #e7efff);
             color: #2864e8;
+            border: 1px solid #d9e4f6;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 800;
+            font-size: 15px;
+            flex-shrink: 0;
         }
 
         .user-info {
             min-width: 125px;
-            max-width: 180px;
+            max-width: 200px;
         }
 
         .user-info strong {
@@ -774,9 +805,10 @@
                     Carregando...
                 </div>
 
-                <div class="notification" title="Notifica&#xE7;&#xF5;es">
+                <button class="notification" type="button" title="Notifica&#xE7;&#xF5;es" aria-label="Notifica&#xE7;&#xF5;es">
+                    <span class="notification-icon" aria-hidden="true">&#x1F514;</span>
                     <span class="notification-badge"></span>
-                </div>
+                </button>
 
                 <div class="user">
 
