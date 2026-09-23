@@ -652,6 +652,179 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* =========================================================
+           PRESENÇA DE HOJE
+        ========================================================= */
+
+        .attendance-overview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 0 0 22px;
+        }
+
+        .attendance-panel {
+            background: #ffffff;
+            border: 1px solid #e3e9f3;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(30, 48, 82, 0.04);
+            min-width: 0;
+        }
+
+        .attendance-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #edf1f6;
+        }
+
+        .attendance-kicker {
+            display: block;
+            margin-bottom: 5px;
+            color: #8a96aa;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .1em;
+        }
+
+        .attendance-header h3 {
+            margin: 0;
+            color: #17213a;
+            font-size: 16px;
+        }
+
+        .attendance-counter {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .present-counter {
+            background: #eafaf1;
+            color: #168445;
+        }
+
+        .absent-counter {
+            background: #fff0f0;
+            color: #c62828;
+        }
+
+        .attendance-list {
+            min-height: 170px;
+            max-height: 310px;
+            overflow-y: auto;
+            padding: 8px 14px 12px;
+        }
+
+        .attendance-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 7px;
+            border-bottom: 1px solid #f0f3f7;
+        }
+
+        .attendance-item:last-child {
+            border-bottom: 0;
+        }
+
+        .attendance-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #edf3ff;
+            color: #2864e8;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .attendance-avatar.absent {
+            background: #fff0f0;
+            color: #c62828;
+        }
+
+        .attendance-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .attendance-name {
+            display: block;
+            color: #17213a;
+            font-size: 12px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .attendance-meta {
+            display: block;
+            margin-top: 2px;
+            color: #8a96aa;
+            font-size: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .attendance-status {
+            flex-shrink: 0;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 999px;
+        }
+
+        .attendance-status.present {
+            background: #eafaf1;
+            color: #168445;
+        }
+
+        .attendance-status.absent {
+            background: #fff0f0;
+            color: #c62828;
+        }
+
+        .attendance-empty {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            color: #8994a9;
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .attendance-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .attendance-header {
+                padding: 15px;
+            }
+
+            .attendance-list {
+                max-height: 250px;
+            }
+        }
     </style>
 <link rel="stylesheet" href="css/responsive.css">
 </head>
@@ -849,16 +1022,16 @@
                 <div class="card danger">
 
                     <div class="card-top">
-                        <div class="card-icon">&#x26A0;&#xFE0F;</div>
-                        <span class="card-label">Sem sa&#xED;da</span>
+                        <div class="card-icon">&#x274C;</div>
+                        <span class="card-label">Ausentes</span>
                     </div>
 
-                    <div class="card-number" id="semSaida">
+                    <div class="card-number" id="ausentes">
                         0
                     </div>
 
                     <div class="card-description">
-                        Entraram e ainda n&#xE3;o sa&#xED;ram
+                        Alunos ausentes hoje
                     </div>
 
                 </div>
@@ -883,8 +1056,46 @@
 
             </div>
 
+            <!-- =====================================================
+                 PRESENÇA DE HOJE
+            ====================================================== -->
 
-             
+            <div class="attendance-overview">
+
+                <div class="attendance-panel present-panel">
+                    <div class="attendance-header">
+                        <div>
+                            <span class="attendance-kicker">PRESENÇA DE HOJE</span>
+                            <h3>Alunos presentes</h3>
+                        </div>
+                        <div class="attendance-counter present-counter" id="presentesListaCount">0</div>
+                    </div>
+
+                    <div id="presentesLista" class="attendance-list">
+                        <div class="attendance-empty">
+                            Carregando presença...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="attendance-panel absent-panel">
+                    <div class="attendance-header">
+                        <div>
+                            <span class="attendance-kicker">SITUAÇÃO DE HOJE</span>
+                            <h3>Alunos ausentes</h3>
+                        </div>
+                        <div class="attendance-counter absent-counter" id="ausentesListaCount">0</div>
+                    </div>
+
+                    <div id="ausentesLista" class="attendance-list">
+                        <div class="attendance-empty">
+                            Carregando ausências...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
 
             <div class="dashboard-grid">
 
@@ -1277,8 +1488,89 @@ function escaparHtmlDashboard(valor) {
     }[c]));
 }
 
+async function carregarPresencaHoje() {
+    const presentesLista = document.getElementById('presentesLista');
+    const ausentesLista = document.getElementById('ausentesLista');
+    const presentesCount = document.getElementById('presentesListaCount');
+    const ausentesCount = document.getElementById('ausentesListaCount');
+    const cardPresentes = document.getElementById('presentes');
+    const cardAusentes = document.getElementById('ausentes');
+
+    try {
+        const resposta = await fetch('/api/presencas/hoje', {
+            headers: cabecalhosAutenticados()
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(dados.erro || 'Erro ao consultar presença de hoje.');
+        }
+
+        const presentes = Array.isArray(dados.presentes) ? dados.presentes : [];
+        const ausentes = Array.isArray(dados.ausentes) ? dados.ausentes : [];
+
+        if (presentesCount) presentesCount.textContent = presentes.length;
+        if (ausentesCount) ausentesCount.textContent = ausentes.length;
+        if (cardPresentes) cardPresentes.textContent = presentes.length;
+        if (cardAusentes) cardAusentes.textContent = ausentes.length;
+
+        const criarItem = (aluno, presente) => {
+            const nome = escaparHtmlDashboard(aluno.nome || 'Aluno');
+            const matricula = escaparHtmlDashboard(aluno.matricula || 'Sem matrícula');
+            const turma = escaparHtmlDashboard(aluno.turma_nome || 'Sem turma');
+            const inicial = (aluno.nome || '?').trim().charAt(0).toUpperCase();
+
+            return `
+                <div class="attendance-item">
+                    <div class="attendance-avatar ${presente ? '' : 'absent'}">${escaparHtmlDashboard(inicial)}</div>
+                    <div class="attendance-info">
+                        <span class="attendance-name" title="${escaparHtmlDashboard(aluno.nome || 'Aluno')}">${nome}</span>
+                        <span class="attendance-meta">${matricula} • ${turma}</span>
+                    </div>
+                    <span class="attendance-status ${presente ? 'present' : 'absent'}">
+                        ${presente ? 'Presente' : 'Ausente'}
+                    </span>
+                </div>
+            `;
+        };
+
+        if (presentesLista) {
+            presentesLista.innerHTML = presentes.length
+                ? presentes.map(aluno => criarItem(aluno, true)).join('')
+                : '<div class="attendance-empty">Nenhum aluno presente neste momento.</div>';
+        }
+
+        if (ausentesLista) {
+            ausentesLista.innerHTML = ausentes.length
+                ? ausentes.map(aluno => criarItem(aluno, false)).join('')
+                : '<div class="attendance-empty">Nenhum aluno ausente.</div>';
+        }
+
+    } catch (erro) {
+        console.error('Erro ao carregar presença de hoje:', erro);
+
+        if (presentesLista) {
+            presentesLista.innerHTML = '<div class="attendance-empty">Não foi possível carregar os presentes.</div>';
+        }
+
+        if (ausentesLista) {
+            ausentesLista.innerHTML = '<div class="attendance-empty">Não foi possível carregar os ausentes.</div>';
+        }
+    }
+}
 async function iniciarDashboard() {
-    if (await exigirAutenticacao()) { carregarResumoAlunos(); carregarRegistrosRecentes(); setInterval(carregarRegistrosRecentes, 15000); }
+    if (await exigirAutenticacao()) {
+        await carregarResumoAlunos();
+        await carregarPresencaHoje();
+        await carregarRegistrosRecentes();
+
+        setInterval(() => {
+            carregarPresencaHoje();
+            carregarResumoAlunos();
+            carregarRegistrosRecentes();
+        }, 15000);
+    }
 }
 
 iniciarDashboard();

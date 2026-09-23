@@ -110,6 +110,64 @@ router.get('/resumo', async (req, res) => {
     }
 });
 
+/* 
+ * Retorna a situação atual dos alunos no dia:
+ * - presentes: último registro de hoje é ENTRADA
+ * - ausentes: não estão atualmente presentes (sem registro ou último registro é SAIDA)
+ */
+router.get('/hoje', async (req, res) => {
+    try {
+        const [alunos] = await pool.execute(`
+            SELECT
+                a.id,
+                a.nome,
+                a.matricula,
+                t.nome AS turma_nome,
+                COALESCE(ultimos.tipo, 'AUSENTE') AS ultimo_tipo,
+                ultimos.data_hora AS ultimo_registro
+            FROM alunos a
+            INNER JOIN turmas t
+                ON t.id = a.turma_id
+                AND t.ativo = 1
+            LEFT JOIN (
+                SELECT r1.aluno_id, r1.tipo, r1.data_hora
+                FROM registros r1
+                INNER JOIN (
+                    SELECT aluno_id, MAX(data_hora) AS ultima_data
+                    FROM registros
+                    WHERE DATE(data_hora) = CURRENT_DATE()
+                    GROUP BY aluno_id
+                ) r2
+                    ON r2.aluno_id = r1.aluno_id
+                    AND r2.ultima_data = r1.data_hora
+                WHERE DATE(r1.data_hora) = CURRENT_DATE()
+            ) ultimos
+                ON ultimos.aluno_id = a.id
+            WHERE a.ativo = 1
+            ORDER BY a.nome ASC
+        `);
+
+        const presentes = alunos.filter(aluno => aluno.ultimo_tipo === 'ENTRADA');
+        const ausentes = alunos.filter(aluno => aluno.ultimo_tipo !== 'ENTRADA');
+
+        return res.json({
+            data: new Date().toISOString().slice(0, 10),
+            total: alunos.length,
+            presentes,
+            ausentes,
+            contadores: {
+                presentes: presentes.length,
+                ausentes: ausentes.length
+            }
+        });
+    } catch (erro) {
+        console.error('❌ Erro ao consultar presença de hoje:', erro);
+        return res.status(500).json({
+            erro: 'Não foi possível consultar os presentes e ausentes de hoje.'
+        });
+    }
+});
+
 router.get('/recentes', async (req, res) => {
     try {
         const limite = Math.min(Math.max(Number(req.query.limite) || 10, 1), 50);
