@@ -3,6 +3,7 @@
     --navy: #082b63;
     --navy-dark: #062454;
     --white: #fff;
+    --background-soft: #f5f7fa;
     --card: #f8fafc;
     --text: #082b63;
     --muted: #475569;
@@ -33,7 +34,7 @@ body.login-page {
     min-height: 100svh;
     margin: 0;
     overflow-x: hidden;
-    background: var(--white);
+    background: var(--background-soft);
     color: var(--text);
     font-family: Inter, "Segoe UI", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -56,7 +57,7 @@ body.login-page {
     grid-auto-rows: clamp(160px, 24vh, 230px);
     grid-auto-rows: clamp(160px, 24dvh, 230px);
     overflow: hidden;
-    background: var(--white);
+    background: var(--background-soft);
     pointer-events: none;
 }
 
@@ -114,7 +115,7 @@ body.login-page {
 }
 
 .tile:nth-child(odd) {
-    background: var(--white);
+    background: var(--background-soft);
     color: var(--navy);
 }
 
@@ -561,7 +562,7 @@ body.login-page main.login-container {
 
     .tile:nth-child(4n + 1),
     .tile:nth-child(4n + 4) {
-        background: var(--white);
+        background: var(--background-soft);
         color: var(--navy);
     }
 
