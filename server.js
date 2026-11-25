@@ -25,6 +25,13 @@ app.use(cors({
 
 app.use(express.json({ limit: '1mb' }));
 
+// Serve the headphones mascot as the default browser-tab favicon for every page.
+app.get('/favicon.ico', (req, res) => {
+    res.type('image/png');
+    res.set('Cache-Control', 'no-cache, max-age=0, must-revalidate');
+    res.sendFile(path.join(__dirname, 'public', 'img', 'favicon-mascote-headphones.png'));
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Rotas amigáveis para os painéis
