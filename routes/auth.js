@@ -16,7 +16,12 @@ router.post('/login', async (req, res) => {
 
     try {
         const [usuarios] = await pool.execute(
-            'SELECT id, nome, email, senha, tipo FROM usuarios WHERE email = ? AND ativo = 1 LIMIT 1',
+            `SELECT u.id, u.nome, u.email, u.senha, u.tipo, u.escola_id
+             FROM usuarios u
+             LEFT JOIN escolas e ON e.id = u.escola_id
+             WHERE u.email = ? AND u.ativo = TRUE
+               AND (u.tipo = 'SUPER_ADMIN' OR e.ativa = TRUE)
+             LIMIT 1`,
             [email]
         );
         const usuario = usuarios[0];
@@ -26,12 +31,12 @@ router.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: usuario.id, nome: usuario.nome, perfil: usuario.tipo },
+            { id: usuario.id },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
         );
 
-        return res.json({ token, usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, perfil: usuario.tipo } });
+        return res.json({ token, usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, perfil: usuario.tipo, escola_id: usuario.escola_id } });
     } catch (erro) {
         console.error('❌ Erro no login:', erro);
         return res.status(500).json({ erro: 'Não foi possível realizar o login.' });

@@ -1,5 +1,17 @@
-const mysql = require('mysql2/promise');
 require('dotenv').config();
+
+if (process.env.DATABASE_URL) {
+    const postgres = require('./postgres');
+    module.exports = postgres;
+    if (process.env.NODE_ENV !== 'test') {
+        postgres.query('SELECT 1')
+            .then(() => console.log('✅ Supabase Postgres conectado com sucesso!'))
+            .catch(erro => console.error('❌ Erro ao conectar no Supabase Postgres:', erro.message));
+    }
+    return;
+}
+
+const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
