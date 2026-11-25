@@ -1,7 +1,5 @@
 const express = require('express');
 const { randomUUID } = require('crypto');
-const path = require('path');
-const fs = require('fs/promises');
 const QRCode = require('qrcode');
 
 const pool = require('../config/database');
@@ -15,19 +13,6 @@ function apenasAdmin(req, res, next) {
         return res.status(403).json({ erro: 'Apenas administradores podem alterar cadastros de alunos.' });
     }
     next();
-}
-
-const PASTA_QR = path.join(__dirname, '..', 'python', 'qrcodes');
-
-async function gerarQr(alunoId, codigoQr) {
-    await fs.mkdir(PASTA_QR, { recursive: true });
-    const arquivo = path.join(PASTA_QR, `aluno_${alunoId}.png`);
-    await QRCode.toFile(arquivo, codigoQr, {
-        errorCorrectionLevel: 'M',
-        margin: 2,
-        width: 500
-    });
-    return arquivo;
 }
 
 router.get('/', async (req, res) => {
@@ -70,18 +55,23 @@ router.get('/:id/qrcode', async (req, res) => {
         );
         if (!aluno) return res.status(404).json({ erro: 'Aluno não encontrado.' });
 
-        const arquivo = path.join(PASTA_QR, `aluno_${aluno.id}.png`);
-        try {
-            await fs.access(arquivo);
-        } catch {
-            await gerarQr(aluno.id, aluno.codigo_qr);
+        const codigoQr = String(aluno.codigo_qr || '').trim();
+        if (!codigoQr) {
+            return res.status(400).json({ erro: 'O aluno não possui um QR Code.' });
         }
 
-        res.download(
-            arquivo,
-            `qrcode_${aluno.matricula || aluno.id}.png`,
-            { headers: { 'Content-Type': 'image/png' } }
-        );
+        const png = await QRCode.toBuffer(codigoQr, {
+            errorCorrectionLevel: 'M',
+            margin: 2,
+            width: 500
+        });
+        const nomeArquivo = String(aluno.matricula || aluno.id).replace(/[^\w.-]/g, '_');
+        res.set({
+            'Content-Type': 'image/png',
+            'Content-Disposition': `attachment; filename="qrcode_${nomeArquivo}.png"`,
+            'Cache-Control': 'no-store'
+        });
+        return res.send(png);
     } catch (erro) {
         console.error('❌ Erro ao gerar/enviar QR Code:', erro);
         res.status(500).json({ erro: 'Não foi possível gerar o QR Code.' });
@@ -139,8 +129,6 @@ router.post('/', apenasAdmin, async (req, res) => {
         );
 
         const alunoId = resultado.insertId;
-        await gerarQr(alunoId, codigoQr);
-
         res.status(201).json({
             mensagem: 'Aluno cadastrado com sucesso!',
             aluno: {
