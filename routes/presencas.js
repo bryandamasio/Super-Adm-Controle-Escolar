@@ -69,34 +69,7 @@ router.post('/registrar', async (req, res) => {
 
 router.get('/resumo', async (req, res) => {
     try {
-        const usarPostgres = Boolean(process.env.DATABASE_URL);
-        const escolaId = req.usuario.perfil === 'SUPER_ADMIN'
-            ? null
-            : Number(req.usuario.escola_id) || 0;
-        const consultaPostgres = `
-            WITH ultimo AS (
-                SELECT DISTINCT ON (r.aluno_id) r.aluno_id, r.tipo
-                FROM registros r
-                INNER JOIN alunos a ON a.id = r.aluno_id
-                WHERE a.ativo = 1
-                  AND a.excluido_em IS NULL
-                  AND (r.data_hora AT TIME ZONE 'America/Sao_Paulo')::date =
-                      (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date
-                  AND (?::bigint IS NULL OR a.escola_id = ?)
-                ORDER BY r.aluno_id, r.data_hora DESC, r.id DESC
-            )
-            SELECT
-                (SELECT COUNT(*) FROM alunos a
-                 WHERE a.ativo = 1 AND a.excluido_em IS NULL
-                   AND (?::bigint IS NULL OR a.escola_id = ?)) AS total_alunos,
-                (SELECT COUNT(*) FROM ultimo WHERE tipo = 'ENTRADA') AS presentes,
-                (SELECT COUNT(*) FROM ultimo WHERE tipo = 'ENTRADA') AS sem_saida,
-                (SELECT COUNT(*) FROM ocorrencias o
-                 INNER JOIN alunos a ON a.id = o.aluno_id
-                 WHERE o.status <> 'RESOLVIDA' AND a.excluido_em IS NULL
-                   AND (?::bigint IS NULL OR a.escola_id = ?)) AS ocorrencias
-        `;
-        const consultaMySql = `
+        const [[resumo]] = await pool.query(`
             SELECT
                 (SELECT COUNT(*) FROM alunos WHERE ativo = 1) AS total_alunos,
                 (
@@ -128,14 +101,7 @@ router.get('/resumo', async (req, res) => {
                     FROM ocorrencias
                     WHERE status <> 'RESOLVIDA'
                 ) AS ocorrencias
-        `;
-        const parametros = usarPostgres
-            ? [escolaId, escolaId, escolaId, escolaId, escolaId, escolaId]
-            : [];
-        const [[resumo]] = await pool.query(
-            usarPostgres ? consultaPostgres : consultaMySql,
-            parametros
-        );
+        `);
 
         res.json(resumo);
     } catch (erro) {
@@ -151,33 +117,7 @@ router.get('/resumo', async (req, res) => {
  */
 router.get('/hoje', async (req, res) => {
     try {
-        const usarPostgres = Boolean(process.env.DATABASE_URL);
-        const escolaId = req.usuario.perfil === 'SUPER_ADMIN'
-            ? null
-            : Number(req.usuario.escola_id) || 0;
-        const consultaPostgres = `
-            SELECT
-                a.id,
-                a.nome,
-                a.matricula,
-                t.nome AS turma_nome,
-                COALESCE(ultimos.tipo, 'AUSENTE') AS ultimo_tipo,
-                ultimos.data_hora AS ultimo_registro
-            FROM alunos a
-            INNER JOIN turmas t ON t.id = a.turma_id AND t.ativo = 1
-            LEFT JOIN (
-                SELECT DISTINCT ON (r.aluno_id)
-                    r.aluno_id, r.tipo, r.data_hora
-                FROM registros r
-                WHERE (r.data_hora AT TIME ZONE 'America/Sao_Paulo')::date =
-                      (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date
-                ORDER BY r.aluno_id, r.data_hora DESC, r.id DESC
-            ) ultimos ON ultimos.aluno_id = a.id
-            WHERE a.ativo = 1 AND a.excluido_em IS NULL
-              ${escolaId === null ? '' : 'AND a.escola_id = ?'}
-            ORDER BY a.nome ASC, a.id ASC
-        `;
-        const consultaMySql = `
+        const [alunos] = await pool.execute(`
             SELECT
                 a.id,
                 a.nome,
@@ -205,11 +145,7 @@ router.get('/hoje', async (req, res) => {
                 ON ultimos.aluno_id = a.id
             WHERE a.ativo = 1
             ORDER BY a.nome ASC
-        `;
-        const [alunos] = await pool.execute(
-            usarPostgres ? consultaPostgres : consultaMySql,
-            usarPostgres && escolaId !== null ? [escolaId] : []
-        );
+        `);
 
         const presentes = alunos.filter(aluno => aluno.ultimo_tipo === 'ENTRADA');
         const ausentes = alunos.filter(aluno => aluno.ultimo_tipo !== 'ENTRADA');

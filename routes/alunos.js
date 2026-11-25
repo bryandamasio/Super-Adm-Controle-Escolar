@@ -1,5 +1,7 @@
 const express = require('express');
 const { randomUUID } = require('crypto');
+const path = require('path');
+const fs = require('fs/promises');
 const QRCode = require('qrcode');
 
 const pool = require('../config/database');
@@ -13,6 +15,19 @@ function apenasAdmin(req, res, next) {
         return res.status(403).json({ erro: 'Apenas administradores podem alterar cadastros de alunos.' });
     }
     next();
+}
+
+const PASTA_QR = path.join(__dirname, '..', 'python', 'qrcodes');
+
+async function gerarQr(alunoId, codigoQr) {
+    await fs.mkdir(PASTA_QR, { recursive: true });
+    const arquivo = path.join(PASTA_QR, `aluno_${alunoId}.png`);
+    await QRCode.toFile(arquivo, codigoQr, {
+        errorCorrectionLevel: 'M',
+        margin: 2,
+        width: 500
+    });
+    return arquivo;
 }
 
 router.get('/', async (req, res) => {
@@ -55,21 +70,18 @@ router.get('/:id/qrcode', async (req, res) => {
         );
         if (!aluno) return res.status(404).json({ erro: 'Aluno não encontrado.' });
 
-        const codigoQr = String(aluno.codigo_qr || '').trim();
-        if (!codigoQr) return res.status(400).json({ erro: 'O aluno não possui um QR Code.' });
+        const arquivo = path.join(PASTA_QR, `aluno_${aluno.id}.png`);
+        try {
+            await fs.access(arquivo);
+        } catch {
+            await gerarQr(aluno.id, aluno.codigo_qr);
+        }
 
-        const png = await QRCode.toBuffer(codigoQr, {
-            errorCorrectionLevel: 'M',
-            margin: 2,
-            width: 500
-        });
-        const nomeArquivo = String(aluno.matricula || aluno.id).replace(/[^\w.-]/g, '_');
-        res.set({
-            'Content-Type': 'image/png',
-            'Content-Disposition': `attachment; filename="qrcode_${nomeArquivo}.png"`,
-            'Cache-Control': 'no-store'
-        });
-        return res.send(png);
+        res.download(
+            arquivo,
+            `qrcode_${aluno.matricula || aluno.id}.png`,
+            { headers: { 'Content-Type': 'image/png' } }
+        );
     } catch (erro) {
         console.error('❌ Erro ao gerar/enviar QR Code:', erro);
         res.status(500).json({ erro: 'Não foi possível gerar o QR Code.' });
@@ -98,7 +110,6 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', apenasAdmin, async (req, res) => {
-    let conexao = null;
     try {
         const nome = String(req.body.nome || '').trim();
         const matricula = String(req.body.matricula || '').trim();
@@ -110,77 +121,25 @@ router.post('/', apenasAdmin, async (req, res) => {
             return res.status(400).json({ erro: 'Nome, matrícula e turma são obrigatórios.' });
         }
 
-        const usarPostgres = Boolean(process.env.DATABASE_URL);
-        const escolaIdUsuario = Number(req.usuario.escola_id) || 0;
         const [[turma]] = await pool.execute(
-            usarPostgres
-                ? 'SELECT id, nome, ativo, escola_id FROM turmas WHERE id = ? AND escola_id = ? LIMIT 1'
-                : 'SELECT id, nome, ativo FROM turmas WHERE id = ? LIMIT 1',
-            usarPostgres ? [turmaId, escolaIdUsuario] : [turmaId]
+            'SELECT id, nome, ativo FROM turmas WHERE id = ? LIMIT 1',
+            [turmaId]
         );
         if (!turma || !turma.ativo) {
             return res.status(400).json({ erro: 'A turma informada não existe ou está inativa.' });
         }
 
         const codigoQr = `ALUNO-${randomUUID()}`;
-        let alunoId;
 
-        if (usarPostgres) {
-            conexao = await pool.getConnection();
-            await conexao.beginTransaction();
+        const [resultado] = await pool.execute(
+            `INSERT INTO alunos
+            (nome, matricula, turma_id, email, whatsapp, codigo_qr)
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [nome, matricula, turmaId, email, whatsapp, codigoQr]
+        );
 
-            const matriculaNormalizada = matricula.normalize('NFKC').trim().toLocaleLowerCase('pt-BR');
-            const chaveMatricula = `${Number(turma.escola_id) || 0}:${matriculaNormalizada}`;
-            await conexao.execute(
-                'SELECT pg_advisory_xact_lock(hashtextextended(?, 0))',
-                [chaveMatricula]
-            );
-
-            const [[duplicado]] = await conexao.execute(
-                `SELECT id FROM alunos
-                 WHERE escola_id = ?
-                   AND lower(btrim(matricula)) = lower(btrim(?))
-                 LIMIT 1`,
-                [turma.escola_id, matricula]
-            );
-            if (duplicado) {
-                await conexao.rollback();
-                return res.status(409).json({
-                    erro: 'Já existe um aluno com esta matrícula nesta escola. O cadastro duplicado foi bloqueado.',
-                    aluno_id: duplicado.id
-                });
-            }
-
-            const [resultado] = await conexao.execute(
-                `INSERT INTO alunos
-                (nome, matricula, turma_id, email, whatsapp, codigo_qr, escola_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [nome, matricula, turmaId, email, whatsapp, codigoQr, turma.escola_id]
-            );
-            alunoId = resultado.insertId;
-            await conexao.commit();
-        } else {
-            const [[duplicado]] = await pool.execute(
-                `SELECT id FROM alunos
-                 WHERE LOWER(TRIM(matricula)) = LOWER(TRIM(?))
-                 LIMIT 1`,
-                [matricula]
-            );
-            if (duplicado) {
-                return res.status(409).json({
-                    erro: 'Já existe um aluno com esta matrícula. O cadastro duplicado foi bloqueado.',
-                    aluno_id: duplicado.id
-                });
-            }
-
-            const [resultado] = await pool.execute(
-                `INSERT INTO alunos
-                (nome, matricula, turma_id, email, whatsapp, codigo_qr)
-                VALUES (?, ?, ?, ?, ?, ?)`,
-                [nome, matricula, turmaId, email, whatsapp, codigoQr]
-            );
-            alunoId = resultado.insertId;
-        }
+        const alunoId = resultado.insertId;
+        await gerarQr(alunoId, codigoQr);
 
         res.status(201).json({
             mensagem: 'Aluno cadastrado com sucesso!',
@@ -197,9 +156,6 @@ router.post('/', apenasAdmin, async (req, res) => {
             }
         });
     } catch (erro) {
-        if (conexao) {
-            try { await conexao.rollback(); } catch {}
-        }
         console.error('❌ Erro ao cadastrar aluno:', erro);
 
         if (erro.code === 'ER_DUP_ENTRY') {
@@ -210,13 +166,10 @@ router.post('/', apenasAdmin, async (req, res) => {
             erro: 'Erro ao cadastrar aluno.',
             detalhe: process.env.NODE_ENV === 'development' ? erro.message : undefined
         });
-    } finally {
-        conexao?.release();
     }
 });
 
 router.patch('/:id', apenasAdmin, async (req, res) => {
-    let conexao = null;
     const id = Number(req.params.id);
     const nome = String(req.body.nome || '').trim();
     const matricula = String(req.body.matricula || '').trim();
@@ -230,72 +183,20 @@ router.patch('/:id', apenasAdmin, async (req, res) => {
     }
 
     try {
-        const usarPostgres = Boolean(process.env.DATABASE_URL);
-        const escolaIdUsuario = Number(req.usuario.escola_id) || 0;
         const [[turma]] = await pool.execute(
-            usarPostgres
-                ? 'SELECT id, ativo, escola_id FROM turmas WHERE id = ? AND escola_id = ?'
-                : 'SELECT id, ativo FROM turmas WHERE id = ?',
-            usarPostgres ? [turmaId, escolaIdUsuario] : [turmaId]
+            'SELECT id, ativo FROM turmas WHERE id = ?',
+            [turmaId]
         );
         if (!turma || !turma.ativo) {
             return res.status(400).json({ erro: 'A turma informada está inválida ou inativa.' });
         }
 
-        let resultado;
-        if (usarPostgres) {
-            conexao = await pool.getConnection();
-            await conexao.beginTransaction();
-            const matriculaNormalizada = matricula.normalize('NFKC').trim().toLocaleLowerCase('pt-BR');
-            const chaveMatricula = `${Number(turma.escola_id) || 0}:${matriculaNormalizada}`;
-            await conexao.execute(
-                'SELECT pg_advisory_xact_lock(hashtextextended(?, 0))',
-                [chaveMatricula]
-            );
-
-            const [[duplicado]] = await conexao.execute(
-                `SELECT id FROM alunos
-                 WHERE escola_id = ? AND id <> ?
-                   AND lower(btrim(matricula)) = lower(btrim(?))
-                 LIMIT 1`,
-                [turma.escola_id, id, matricula]
-            );
-            if (duplicado) {
-                await conexao.rollback();
-                return res.status(409).json({
-                    erro: 'Já existe outro aluno com esta matrícula nesta escola. A alteração foi bloqueada.',
-                    aluno_id: duplicado.id
-                });
-            }
-
-            [resultado] = await conexao.execute(
-                `UPDATE alunos
-                 SET nome = ?, matricula = ?, turma_id = ?, email = ?, whatsapp = ?, ativo = ?
-                 WHERE id = ? AND escola_id = ?`,
-                [nome, matricula, turmaId, email, whatsapp, ativo, id, turma.escola_id]
-            );
-            await conexao.commit();
-        } else {
-            const [[duplicado]] = await pool.execute(
-                `SELECT id FROM alunos
-                 WHERE id <> ? AND LOWER(TRIM(matricula)) = LOWER(TRIM(?))
-                 LIMIT 1`,
-                [id, matricula]
-            );
-            if (duplicado) {
-                return res.status(409).json({
-                    erro: 'Já existe outro aluno com esta matrícula. A alteração foi bloqueada.',
-                    aluno_id: duplicado.id
-                });
-            }
-
-            [resultado] = await pool.execute(
-                `UPDATE alunos
-                 SET nome = ?, matricula = ?, turma_id = ?, email = ?, whatsapp = ?, ativo = ?
-                 WHERE id = ?`,
-                [nome, matricula, turmaId, email, whatsapp, ativo, id]
-            );
-        }
+        const [resultado] = await pool.execute(
+            `UPDATE alunos
+             SET nome = ?, matricula = ?, turma_id = ?, email = ?, whatsapp = ?, ativo = ?
+             WHERE id = ?`,
+            [nome, matricula, turmaId, email, whatsapp, ativo, id]
+        );
 
         if (!resultado.affectedRows) {
             return res.status(404).json({ erro: 'Aluno não encontrado.' });
@@ -303,16 +204,11 @@ router.patch('/:id', apenasAdmin, async (req, res) => {
 
         res.json({ mensagem: 'Aluno atualizado com sucesso.' });
     } catch (erro) {
-        if (conexao) {
-            try { await conexao.rollback(); } catch {}
-        }
         console.error('❌ Erro ao atualizar aluno:', erro);
         if (erro.code === 'ER_DUP_ENTRY') {
             return res.status(409).json({ erro: 'Esta matrícula já está cadastrada.' });
         }
         res.status(500).json({ erro: 'Não foi possível atualizar o aluno.' });
-    } finally {
-        conexao?.release();
     }
 });
 
