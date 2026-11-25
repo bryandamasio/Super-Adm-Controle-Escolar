@@ -19,8 +19,8 @@ router.post('/login', async (req, res) => {
             `SELECT u.id, u.nome, u.email, u.senha, u.tipo, u.escola_id
              FROM usuarios u
              LEFT JOIN escolas e ON e.id = u.escola_id
-             WHERE u.email = ? AND u.ativo = TRUE
-               AND (u.tipo = 'SUPER_ADMIN' OR e.ativa = TRUE)
+             WHERE u.email = ? AND u.ativo = 1
+               AND (u.tipo = 'SUPER_ADMIN' OR e.ativa = 1)
              LIMIT 1`,
             [email]
         );

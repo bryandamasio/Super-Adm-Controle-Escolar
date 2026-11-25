@@ -14,7 +14,7 @@ async function autenticar(req, res, next) {
         const [[usuario]] = await pool.execute(
             `SELECT id, nome, email, tipo, escola_id
              FROM usuarios
-             WHERE id = ? AND ativo = TRUE
+             WHERE id = ? AND ativo = 1
              LIMIT 1`,
             [payload.id]
         );
