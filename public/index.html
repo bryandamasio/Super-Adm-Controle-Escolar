@@ -2,108 +2,146 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Sistema de Presença</title>
-
-    <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/responsive.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#062440">
+    <link rel="manifest" href="/manifest.webmanifest?v=20261124-favicon-headphones">
+    <link rel="icon" href="/img/favicon-mascote-headphones.png?v=20261124-favicon-headphones" type="image/png">
+    <title>Sistema de Presença Escolar</title>
+    <link rel="stylesheet" href="css/home.css?v=20261124-home-redesign">
 </head>
-
-<body>
-
+<body class="pagina-inicial">
     <header class="topo">
-        <div class="logo">
-            🏫 <span>Sistema de Presença</span>
-        </div>
-        
-        <a href="login.html" class="botao-login">Entrar</a>
-        
+        <a class="marca" href="index.html" aria-label="Sistema de Presença — página inicial">
+            <img src="img/logo-escola.jpg" alt="Logo da escola PEI-EE Nello Lorenzon">
+            <span class="marca-divisor" aria-hidden="true"></span>
+            <span class="marca-titulo">Sistema de Presença</span>
+        </a>
+
+        <a href="login.html" class="botao-login">
+            <span>Acessar o sistema</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                <path d="M4.5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </a>
     </header>
 
     <main class="inicio">
-
-        <section class="hero">
-
+        <section class="hero" aria-labelledby="titulo-principal">
             <div class="conteudo">
-
                 <span class="tag">CONTROLE ESCOLAR</span>
+                <h1 id="titulo-principal">Controle de presença <span>simples e seguro.</span></h1>
+                <p class="hero-descricao">Gerencie a rotina escolar com mais agilidade, acompanhando entradas, saídas e informações importantes em um só lugar.</p>
 
-                <h1>
-                    Controle de presença
-                    <span>simples e seguro.</span>
-                </h1>
-
-                <p>
-                    Registre a entrada e a saída dos alunos
-                    utilizando QR Code e acompanhe tudo
-                    pelo sistema da escola.
-                </p>
-
-                <button onclick="window.location.href='dashboard.html'">
-                    Acessar sistema →
-                </button>
-
+                <a href="mobile.html" class="mobile-entry-link">
+                    <svg class="icone-celular" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                        <rect x="6.3" y="2.3" width="11.4" height="19.4" rx="2.2" stroke="currentColor" stroke-width="2" />
+                        <path d="M10 5h4M11 18.5h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                    <span class="mobile-entry-divisor" aria-hidden="true"></span>
+                    <span class="mobile-entry-label">Acesse a versão mobile</span>
+                    <svg class="seta-link" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                        <path d="M4.5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+                <p class="mobile-entry-hint">Entre com seu e-mail e senha cadastrados. Compatível com iPhone (iOS) e Android.</p>
             </div>
 
-            <div class="cartao-qr">
-
-                <div class="icone-qr">
-                    📷
+            <section class="cartao-matricula" aria-labelledby="titulo-cartao">
+                <div class="icone-prancheta" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <path d="M22 13h-5a5 5 0 0 0-5 5v34a5 5 0 0 0 5 5h30a5 5 0 0 0 5-5V18a5 5 0 0 0-5-5h-5" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+                        <path d="M24 9h16a4 4 0 0 1 4 4v5H20v-5a4 4 0 0 1 4-4Z" fill="currentColor" />
+                        <circle cx="25" cy="29" r="3.5" fill="#16A34A" />
+                        <path d="m23.5 29 1.2 1.2 2.4-2.6M33 29h11M23.5 39l1.2 1.2 2.4-2.6M33 39h11M23.5 49l1.2 1.2 2.4-2.6M33 49h11" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                 </div>
-
-                <h2>Leitura por QR Code</h2>
-
-                <p>
-                    Registro rápido de entrada e saída
-                    dos alunos.
-                </p>
-
-                <div class="status">
-                    <span></span>
-                    Sistema funcionando
+                <h2 id="titulo-cartao">Registro por matrícula</h2>
+                <p>Faça o registro de entrada e saída com rapidez usando a matrícula do aluno.</p>
+                <div class="status" id="status-sistema" data-status="verificando" role="status" aria-live="polite">
+                    <span class="status-ponto" aria-hidden="true"></span>
+                    <span class="status-texto">Verificando sistema...</span>
                 </div>
-
-            </div>
-
+            </section>
         </section>
 
-        <section class="recursos">
+        <nav class="recursos" aria-label="Acesso às áreas do sistema">
+            <a class="recurso" href="presenca.html">
+                <span class="icone-recurso" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" fill="none">
+                        <circle cx="17" cy="15" r="7" fill="currentColor" />
+                        <path d="M4 39c0-8 5.8-13 13-13s13 5 13 13v2H4v-2Z" fill="currentColor" />
+                        <path d="M31 14h11M31 22h11M31 30h11M31 38h8" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="recurso-divisor" aria-hidden="true"></span>
+                <span class="recurso-texto">
+                    <strong>Registro de presença</strong>
+                    <span>Registre entradas e saídas pela matrícula.</span>
+                </span>
+                <svg class="recurso-seta" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M4.5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
 
-            <div class="recurso">
-                <div>📷</div>
-                <h3>QR Code</h3>
-                <p>
-                    Registre entradas e saídas
-                    rapidamente.
-                </p>
-            </div>
+            <a class="recurso" href="ocorrencias.html">
+                <span class="icone-recurso" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" fill="none">
+                        <path d="M24 5a4 4 0 0 1 4 4v2.1c6 1.7 9 6.4 9 13.4v7l4 5v2H7v-2l4-5v-7c0-7 3-11.7 9-13.4V9a4 4 0 0 1 4-4Z" fill="currentColor" />
+                        <path d="M19 42a5.3 5.3 0 0 0 10 0" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="recurso-divisor" aria-hidden="true"></span>
+                <span class="recurso-texto">
+                    <strong>Ocorrências</strong>
+                    <span>Acompanhe saídas antecipadas e registros sem saída.</span>
+                </span>
+                <svg class="recurso-seta" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M4.5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
 
-            <div class="recurso">
-                <div>🔔</div>
-                <h3>Ocorrências</h3>
-                <p>
-                    Acompanhe saídas antecipadas
-                    e registros sem saída.
-                </p>
-            </div>
-
-            <div class="recurso">
-                <div>📊</div>
-                <h3>Relatórios</h3>
-                <p>
-                    Consulte os registros
-                    da escola.
-                </p>
-            </div>
-
-        </section>
-
+            <a class="recurso" href="relatorios.html">
+                <span class="icone-recurso" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" fill="currentColor">
+                        <rect x="5" y="26" width="10" height="17" rx="2" />
+                        <rect x="20" y="17" width="10" height="26" rx="2" />
+                        <rect x="35" y="7" width="9" height="36" rx="2" />
+                    </svg>
+                </span>
+                <span class="recurso-divisor" aria-hidden="true"></span>
+                <span class="recurso-texto">
+                    <strong>Relatórios</strong>
+                    <span>Consulte os registros da escola.</span>
+                </span>
+                <svg class="recurso-seta" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M4.5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+        </nav>
     </main>
 
-    <footer>
-        Sistema de Presença © 2026
+    <footer class="rodape">
+        <span aria-hidden="true"></span>
+        <p>Sistema de Presença 2026</p>
+        <span aria-hidden="true"></span>
     </footer>
 
+    <script>
+        (async () => {
+            const indicador = document.getElementById('status-sistema');
+            const texto = indicador.querySelector('.status-texto');
+
+            try {
+                const resposta = await fetch('/api/health', { cache: 'no-store' });
+                const dados = await resposta.json();
+                if (!resposta.ok || dados.ok !== true) throw new Error('Sistema indisponível');
+                indicador.dataset.status = 'online';
+                texto.textContent = 'Sistema funcionando';
+            } catch {
+                indicador.dataset.status = 'offline';
+                texto.textContent = 'Sistema indisponível no momento';
+            }
+        })();
+    </script>
 </body>
 </html>

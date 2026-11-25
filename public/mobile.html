@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#2864e8">
+    <meta name="description" content="Acesso móvel ao Sistema de Presença Escolar, com leitor NFC para entrada e saída.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Presença Escolar">
+    <link rel="manifest" href="/manifest.webmanifest?v=20261124-favicon-headphones">
+    <link rel="apple-touch-icon" href="/img/favicon-mascote-headphones.png?v=20261124-favicon-headphones">
+    <link rel="icon" href="/img/favicon-mascote-headphones.png?v=20261124-favicon-headphones" type="image/png">
+    <link rel="stylesheet" href="css/responsive.css?v=20261027-sidebar-bg-fix-v1">
+    <link rel="stylesheet" href="css/mobile-app.css">
+    <title>Acesso mobile | Controle Escolar</title>
+</head>
+<body class="mobile-app">
+<main class="mobile-page">
+    <header class="mobile-home-header">
+        <div class="mobile-home-brand">
+            <img src="img/logo-escola.jpg" alt="Logo da escola">
+            <div><strong>Controle Escolar</strong><span>Sistema de Presença</span></div>
+        </div>
+        <div id="mobileUserName" class="mobile-home-user">Carregando acesso...</div>
+    </header>
+
+    <section class="mobile-home-hero" aria-labelledby="mobileTitle">
+        <p class="eyebrow">Versão para celular</p>
+        <h1 id="mobileTitle">Presença rápida com NFC</h1>
+        <p>Interface responsiva para iPhone (iOS) e Android. Entre com o mesmo e-mail e senha cadastrados no sistema para registrar entradas e saídas.</p>
+        <div class="mobile-home-actions">
+            <a href="presenca.html#leitorNfc">◉ Abrir leitor NFC</a>
+            <a class="secondary" href="presenca.html">Usar câmera ou código</a>
+        </div>
+    </section>
+
+    <div id="mobileNfcStatus" class="mobile-nfc-status" role="status" aria-live="polite" data-state="warning">
+        Verificando suporte NFC deste aparelho…
+    </div>
+
+    <div class="mobile-home-section-title">
+        <h2 id="modulesTitle">Acessos do sistema</h2>
+        <p>Toque em uma opção para abrir a tela em tamanho cheio.</p>
+    </div>
+
+    <nav id="mobileModules" class="mobile-module-grid" aria-labelledby="modulesTitle"></nav>
+
+    <div class="mobile-install-note">
+        <button id="installMobileApp" type="button" hidden>Instalar no celular</button>
+        <span id="installMobileHelp">Para instalar, use o menu do navegador: “Adicionar à tela inicial” ou “Instalar app”. A instalação não dispensa internet para consultar e salvar registros.</span>
+    </div>
+
+    <p id="mobileNfcFooter" class="mobile-home-footer">Para usar NFC no navegador, é necessário um aparelho compatível e conexão HTTPS.</p>
+</main>
+
+<script src="js/auth.js"></script>
+<script>
+(() => {
+    const nfcStatus = document.getElementById('mobileNfcStatus');
+    const modules = document.getElementById('mobileModules');
+    const installButton = document.getElementById('installMobileApp');
+    const installHelp = document.getElementById('installMobileHelp');
+    let promptInstalacao = null;
+
+    const atalhos = [
+        { href: 'presenca.html#leitorNfc', icon: '◉', title: 'Registrar presença', description: 'Ler cartão e marcar entrada ou saída.' },
+        { href: 'nfc-cartoes.html', icon: '💳', title: 'Gravar cartão NFC', description: 'Vincular e gravar cartão de aluno.', perfis: ['ADMIN', 'SUPER_ADMIN'] },
+        { href: 'alunos.html', icon: '🎓', title: 'Alunos', description: 'Consultar e atualizar cadastros.' },
+        { href: 'professores.html', icon: '👩‍🏫', title: 'Professores', description: 'Consultar a equipe escolar.' },
+        { href: 'turmas.html', icon: '🏫', title: 'Turmas', description: 'Organizar as turmas.' },
+        { href: 'ocorrencias.html', icon: '🔔', title: 'Ocorrências', description: 'Acompanhar alertas e saídas.' },
+        { href: 'relatorios.html', icon: '📊', title: 'Relatórios', description: 'Consultar o histórico de presença.' },
+        { href: 'configuracao-horario.html', icon: '🕒', title: 'Horários', description: 'Configurar entrada e tolerância.', perfis: ['ADMIN', 'SUPER_ADMIN'] },
+        { href: 'dashboard.html', icon: '▦', title: 'Painel completo', description: 'Abrir o dashboard do sistema.' }
+    ];
+
+    function textoSeguro(valor) {
+        return escaparHtml(valor);
+    }
+
+    async function atualizarSuporteNfc() {
+        if (window.MobileNativeNfc?.isNative()) {
+            try {
+                const compativel = await window.MobileNativeNfc.isSupported();
+                if (!compativel) {
+                    nfcStatus.dataset.state = 'warning';
+                    nfcStatus.textContent = 'Este aparelho não possui NFC compatível. O registro por QR Code continua disponível.';
+                    return;
+                }
+
+                nfcStatus.dataset.state = 'ready';
+                nfcStatus.textContent = `NFC nativo disponível no aplicativo ${window.MobileNativeNfc.platform() === 'ios' ? 'para iPhone' : 'para Android'}.`;
+                document.getElementById('mobileNfcFooter').textContent = 'Aproxime cartões NFC NDEF pelo aplicativo instalado para gravar cartões ou registrar entrada e saída.';
+            } catch {
+                nfcStatus.dataset.state = 'warning';
+                nfcStatus.textContent = 'Não foi possível verificar o NFC deste aparelho. O registro por QR Code continua disponível.';
+            }
+            return;
+        }
+
+        if (!window.isSecureContext) {
+            nfcStatus.dataset.state = 'warning';
+            nfcStatus.textContent = 'NFC pelo navegador exige conexão segura (HTTPS). Abra o endereço publicado no Vercel; no iPhone, use câmera ou código.';
+            return;
+        }
+        if (!('NDEFReader' in window)) {
+            nfcStatus.dataset.state = 'warning';
+            nfcStatus.textContent = 'Este navegador não oferece Web NFC. No iPhone, instale o app nativo para usar cartões NFC; câmera e código continuam disponíveis nesta página.';
+            return;
+        }
+        nfcStatus.dataset.state = 'ready';
+        nfcStatus.textContent = 'Web NFC disponível. Ative o NFC nas configurações do aparelho e use cartões/tags graváveis no formato NDEF.';
+    }
+
+    async function iniciar() {
+        if (!tokenAtual()) {
+            window.location.replace('login.html?redirect=mobile.html');
+            return;
+        }
+        if (!(await exigirAutenticacao())) return;
+
+        const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+        document.getElementById('mobileUserName').textContent = usuario.nome || 'Usuário conectado';
+        modules.innerHTML = atalhos
+            .filter(item => !item.perfis || item.perfis.includes(usuario.perfil))
+            .map(item => `<a class="mobile-module-card" href="${item.href}"><span class="mobile-module-icon" aria-hidden="true">${item.icon}</span><span><strong>${textoSeguro(item.title)}</strong><span>${textoSeguro(item.description)}</span></span></a>`)
+            .join('');
+        await atualizarSuporteNfc();
+    }
+
+    window.addEventListener('beforeinstallprompt', evento => {
+        evento.preventDefault();
+        promptInstalacao = evento;
+        installButton.hidden = false;
+    });
+
+    installButton.addEventListener('click', async () => {
+        if (!promptInstalacao) return;
+        promptInstalacao.prompt();
+        const escolha = await promptInstalacao.userChoice;
+        installHelp.textContent = escolha.outcome === 'accepted'
+            ? 'Aplicativo adicionado. Abra “Presença Escolar” pela tela inicial do celular.'
+            : 'Você pode instalar depois pelo menu do navegador: “Adicionar à tela inicial” ou “Instalar app”.';
+        promptInstalacao = null;
+        installButton.hidden = true;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installHelp.textContent = 'Aplicativo instalado. Ele continua precisando de internet para consultar e salvar registros.';
+        installButton.hidden = true;
+    });
+
+    iniciar().catch(erro => {
+        nfcStatus.dataset.state = 'warning';
+        nfcStatus.textContent = erro.message || 'Não foi possível carregar os acessos do sistema.';
+    });
+})();
+</script>
+<script src="js/global-sidebar.js?v=20261124-professor-attendance"></script>
+</body>
+</html>
