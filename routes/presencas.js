@@ -79,7 +79,7 @@ router.get('/resumo', async (req, res) => {
                     SELECT DISTINCT ON (r.aluno_id) r.aluno_id, r.tipo
                     FROM registros r
                     INNER JOIN alunos a ON a.id = r.aluno_id
-                    WHERE a.ativo IS TRUE
+                    WHERE a.ativo = 1
                       AND to_jsonb(a)->>'excluido_em' IS NULL
                       AND (r.data_hora AT TIME ZONE 'America/Sao_Paulo')::date =
                           (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date
@@ -88,7 +88,7 @@ router.get('/resumo', async (req, res) => {
                 )
                 SELECT
                     (SELECT COUNT(*) FROM alunos a
-                     WHERE a.ativo IS TRUE
+                     WHERE a.ativo = 1
                        AND to_jsonb(a)->>'excluido_em' IS NULL
                        AND (?::bigint IS NULL OR a.escola_id = ?)) AS total_alunos,
                     (SELECT COUNT(*) FROM ultimo WHERE tipo = 'ENTRADA') AS presentes,
@@ -167,7 +167,7 @@ router.get('/hoje', async (req, res) => {
                     COALESCE(ultimos.tipo, 'AUSENTE') AS ultimo_tipo,
                     ultimos.data_hora AS ultimo_registro
                 FROM alunos a
-                INNER JOIN turmas t ON t.id = a.turma_id AND t.ativo IS TRUE
+                INNER JOIN turmas t ON t.id = a.turma_id AND t.ativo = 1
                 LEFT JOIN (
                     SELECT DISTINCT ON (r.aluno_id)
                         r.aluno_id, r.tipo, r.data_hora
@@ -176,7 +176,7 @@ router.get('/hoje', async (req, res) => {
                           (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date
                     ORDER BY r.aluno_id, r.data_hora DESC, r.id DESC
                 ) ultimos ON ultimos.aluno_id = a.id
-                WHERE a.ativo IS TRUE
+                WHERE a.ativo = 1
                   AND to_jsonb(a)->>'excluido_em' IS NULL
                   ${filtroEscola}
                 ORDER BY a.nome ASC, a.id ASC
