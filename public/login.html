@@ -1,203 +1,41 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#082B63">
-    <meta name="description" content="Acesse com segurança o Sistema de Presença Escolar da PEI-EE Nello Lorenzon.">
-    <link rel="manifest" href="/manifest.webmanifest?v=20261124-favicon-headphones">
-    <link rel="icon" href="/img/favicon-mascote-headphones.png?v=20261124-favicon-headphones" type="image/png">
-    <title>Login | Sistema de Presença</title>
-    <link rel="stylesheet" href="css/login.css?v=20261125-login-bg">
-    <link rel="stylesheet" href="css/responsive.css?v=20261027-sidebar-bg-fix-v1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Sistema de Presença</title>
+<link rel="stylesheet" href="css/login.css">
+<link rel="stylesheet" href="css/responsive.css">
 </head>
-<body class="login-page">
-    <svg class="icon-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <symbol id="icon-star" viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.55 4.43 1.08 6.27L12 17.15l-5.63 2.96 1.08-6.27L2.9 9.4l6.3-.91L12 2.8Z"/></symbol>
-        <symbol id="icon-book" viewBox="0 0 24 24"><path d="M3 5.7c3.2-.9 6.2-.45 9 1.3v12c-2.8-1.75-5.8-2.2-9-1.3v-12Z"/><path d="M21 5.7c-3.2-.9-6.2-.45-9 1.3v12c2.8-1.75 5.8-2.2 9-1.3v-12Z"/><path d="M6 9c1.5-.25 3 .02 4.5.8M6 12c1.5-.25 3 .02 4.5.8m7.5-3.8c-1.5-.25-3 .02-4.5.8m4.5 2.2c-1.5-.25-3 .02-4.5.8"/></symbol>
-        <symbol id="icon-pencil" viewBox="0 0 24 24"><path d="m4 16.8-.9 4.1 4.1-.9L20 7.2 16.8 4 4 16.8Z"/><path d="m14.9 5.9 3.2 3.2M4 16.8l3.2 3.2"/></symbol>
-        <symbol id="icon-cap" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5.2c3.8 2.7 8.2 2.7 12 0V11M22 9v6"/><circle cx="22" cy="16.5" r="1"/></symbol>
-        <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
-        <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></symbol>
-        <symbol id="icon-login" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></symbol>
-        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M5 12h14"/></symbol>
-    </svg>
-
-    <div class="institutional-background" aria-hidden="true">
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--star"><svg><use href="#icon-star"/></svg></div>
-        <div class="tile tile--book"><svg><use href="#icon-book"/></svg></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--cap"><svg><use href="#icon-cap"/></svg></div>
-        <div class="tile tile--star"><svg><use href="#icon-star"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--pencil"><svg><use href="#icon-pencil"/></svg></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-
-        <div class="tile tile--star"><svg><use href="#icon-star"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--book"><svg><use href="#icon-book"/></svg></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--pencil"><svg><use href="#icon-pencil"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--cap"><svg><use href="#icon-cap"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-
-        <div class="tile tile--book"><svg><use href="#icon-book"/></svg></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--star"><svg><use href="#icon-star"/></svg></div>
-        <div class="tile tile--book"><svg><use href="#icon-book"/></svg></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--cap"><svg><use href="#icon-cap"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--pencil"><svg><use href="#icon-pencil"/></svg></div>
-
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--star"><svg><use href="#icon-star"/></svg></div>
-        <div class="tile tile--book"><svg><use href="#icon-book"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--cap"><svg><use href="#icon-cap"/></svg></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-
-        <div class="tile tile--pencil"><svg><use href="#icon-pencil"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--book"><svg><use href="#icon-book"/></svg></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--star"><svg><use href="#icon-star"/></svg></div>
-        <div class="tile tile--school"><span class="school-name">PEI-EE<br>NELLO<br>LORENZON</span></div>
-        <div class="tile tile--phrase"><span class="school-slogan"><em>A melhor</em><br><strong>escola</strong><br>para os<br><em>melhores</em><br><strong>alunos</strong><i></i></span></div>
-        <div class="tile tile--book"><svg><use href="#icon-book"/></svg></div>
-        <div class="tile tile--cap"><svg><use href="#icon-cap"/></svg></div>
-    </div>
-
-    <div class="cursor-spotlight" id="cursorSpotlight" aria-hidden="true"></div>
-
-    <main class="login-container">
-        <section class="login-card" aria-labelledby="tituloLogin">
-            <img class="school-logo" src="img/logo-escola.jpg" alt="Logo oficial da PEI-EE Nello Lorenzon">
-            <h1 id="tituloLogin">Sistema de Presença</h1>
-            <div class="subtitle-row"><span aria-hidden="true"></span><p class="subtitulo">Acesse o painel da escola</p><span aria-hidden="true"></span></div>
-
-            <form id="formLogin">
-                <div class="form-field">
-                    <label for="email"><svg aria-hidden="true"><use href="#icon-mail"/></svg>E-mail</label>
-                    <div class="input-shell">
-                        <svg class="input-icon" aria-hidden="true"><use href="#icon-mail"/></svg>
-                        <input type="email" id="email" name="email" placeholder="Digite seu e-mail" autocomplete="username" inputmode="email" required aria-describedby="erroLogin">
-                    </div>
-                </div>
-
-                <div class="form-field">
-                    <label for="senha"><svg aria-hidden="true"><use href="#icon-lock"/></svg>Senha</label>
-                    <div class="input-shell senha-container">
-                        <svg class="input-icon" aria-hidden="true"><use href="#icon-lock"/></svg>
-                        <input type="password" id="senha" name="senha" placeholder="Digite sua senha" autocomplete="current-password" required aria-describedby="erroLogin">
-                        <button class="senha-toggle" id="alternarSenha" type="button" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha">
-                            <svg class="icone-olho" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-                            <svg class="icone-olho-oculto" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15.7 15.7 0 0 1-3.1 3.9M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7c1.4 0 2.7-.3 3.8-.8"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <button class="submit-button" id="botaoEntrar" type="submit">
-                    <svg class="submit-icon" aria-hidden="true"><use href="#icon-login"/></svg>
-                    <span class="button-spinner" aria-hidden="true"></span>
-                    <span class="button-text">Entrar</span>
-                </button>
-            </form>
-
-            <p id="erroLogin" role="alert" aria-live="assertive"></p>
-            <a href="index.html" class="voltar"><svg aria-hidden="true"><use href="#icon-arrow-left"/></svg><span>Voltar para a página inicial</span></a>
-        </section>
-    </main>
-
-    <script>
-        const campoSenha = document.getElementById('senha');
-        const alternarSenha = document.getElementById('alternarSenha');
-        const botaoEntrar = document.getElementById('botaoEntrar');
-        const textoBotaoEntrar = botaoEntrar.querySelector('.button-text');
-        const formLogin = document.getElementById('formLogin');
-        const acessoMobile = new URLSearchParams(window.location.search).get('redirect') === 'mobile.html';
-        const cursorSpotlight = document.getElementById('cursorSpotlight');
-        const cursorPointer = window.matchMedia('(pointer: fine) and (hover: hover)');
-        const cursorMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-        if (cursorPointer.matches && !cursorMotion.matches) {
-            document.addEventListener('pointermove', (evento) => {
-                if (evento.pointerType === 'touch') return;
-                cursorSpotlight.style.setProperty('--cursor-x', `${evento.clientX}px`);
-                cursorSpotlight.style.setProperty('--cursor-y', `${evento.clientY}px`);
-                cursorSpotlight.classList.add('is-visible');
-            }, { passive: true });
-
-            document.addEventListener('pointerdown', (evento) => {
-                if (evento.pointerType === 'touch') return;
-                cursorSpotlight.classList.remove('is-clicking');
-                void cursorSpotlight.offsetWidth;
-                cursorSpotlight.classList.add('is-clicking');
-            });
-
-            cursorSpotlight.addEventListener('animationend', () => cursorSpotlight.classList.remove('is-clicking'));
-            document.addEventListener('pointerleave', () => cursorSpotlight.classList.remove('is-visible'));
-        }
-
-        if (acessoMobile) {
-            document.querySelector('.subtitulo').textContent = 'Entre com seu e-mail e senha cadastrados para acessar a versão mobile.';
-            document.title = 'Entrar na versão mobile | Sistema de Presença';
-        }
-
-        alternarSenha.addEventListener('click', () => {
-            const mostrar = campoSenha.type === 'password';
-            campoSenha.type = mostrar ? 'text' : 'password';
-            alternarSenha.setAttribute('aria-pressed', String(mostrar));
-            alternarSenha.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
-            alternarSenha.title = mostrar ? 'Ocultar senha' : 'Mostrar senha';
-        });
-
-        formLogin.addEventListener('submit', async (evento) => {
-            evento.preventDefault();
-            if (botaoEntrar.disabled) return;
-
-            const erro = document.getElementById('erroLogin');
-            erro.textContent = '';
-            botaoEntrar.disabled = true;
-            botaoEntrar.setAttribute('aria-busy', 'true');
-            textoBotaoEntrar.textContent = 'Entrando...';
-
-            try {
-                const resposta = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: document.getElementById('email').value,
-                        senha: campoSenha.value
-                    })
-                });
-                const dados = await resposta.json();
-                if (!resposta.ok) {
-                    erro.textContent = dados.erro || 'Não foi possível entrar.';
-                    return;
-                }
-
-                localStorage.setItem('token', dados.token);
-                localStorage.setItem('usuario', JSON.stringify(dados.usuario));
-                window.location.href = acessoMobile
-                    ? 'mobile.html'
-                    : (dados.usuario?.perfil === 'PROFESSOR' ? 'professor.html' : 'dashboard.html');
-            } catch (e) {
-                erro.textContent = 'Não foi possível conectar ao servidor.';
-                console.error(e);
-            } finally {
-                botaoEntrar.disabled = false;
-                botaoEntrar.removeAttribute('aria-busy');
-                textoBotaoEntrar.textContent = 'Entrar';
-            }
-        });
-    </script>
+<body>
+<main class="login-container">
+<section class="login-card">
+<div class="logo">🏫</div>
+<h1>Sistema de Presença</h1>
+<p class="subtitulo">Acesse o painel da escola</p>
+<form id="formLogin">
+<label for="email">E-mail</label>
+<input type="email" id="email" placeholder="Digite seu e-mail" required>
+<label for="senha">Senha</label>
+<input type="password" id="senha" placeholder="Digite sua senha" required>
+<button type="submit">Entrar</button>
+</form>
+<p id="erroLogin" role="alert"></p>
+<a href="index.html" class="voltar">← Voltar para a página inicial</a>
+</section>
+</main>
+<script>
+document.getElementById('formLogin').addEventListener('submit', async (evento) => {
+ evento.preventDefault();
+ const erro=document.getElementById('erroLogin'); erro.textContent='';
+ try{
+  const resposta=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('email').value,senha:document.getElementById('senha').value})});
+  const dados=await resposta.json();
+  if(!resposta.ok){erro.textContent=dados.erro||'Não foi possível entrar.';return;}
+  localStorage.setItem('token',dados.token); localStorage.setItem('usuario',JSON.stringify(dados.usuario));
+  window.location.href=dados.usuario?.perfil==='PROFESSOR'?'professor.html':'dashboard.html';
+ }catch(e){erro.textContent='Não foi possível conectar ao servidor.';console.error(e);}
+});
+</script>
 </body>
 </html>
